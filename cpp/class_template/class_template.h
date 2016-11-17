@@ -18,7 +18,7 @@ public:
     TestClass(T &t_) : t(t_) { }
     ~TestClass();
 
-    void print();
+    void print(std::string st = "t");
 
 };
 
