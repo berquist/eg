@@ -39,14 +39,34 @@ void TestClass<T>::print(std::string st)
 
 }
 
-template void TestClass<arma::vec>::print(std::string st);
-template void TestClass<arma::mat>::print(std::string st);
+// Not necessary?
+// template void TestClass<arma::vec>::print(std::string st);
+// template void TestClass<arma::mat>::print(std::string st);
+
+template <class T>
+T TestClass_Derived<T>::add(T &t1, T &t2)
+{
+
+    return t1 + t2;
+
+}
+
+// Not necessary?
+// template arma::vec TestClass_Derived<arma::vec>::add(arma::vec &t1, arma::vec &t2);
+// template arma::mat TestClass_Derived<arma::mat>::add(arma::mat &t1, arma::mat &t2);
+
+arma::mat TestClass_Fixed::mul(arma::mat &m1, arma::mat &m2)
+{
+
+    return m1 * m2;
+
+}
 
 int main()
 {
 
-    size_t dim = 3;
-    double f = 0.56;
+    const size_t dim = 2;
+    const double f = 0.56;
 
     arma::vec fv3(dim);
     fv3.fill(f);
@@ -70,6 +90,17 @@ int main()
     tcv3.print("tcv3");
     tcm.print("tcm");
     tcm2.print("tcm2");
+
+    arma::cube c1 = arma::cube(dim, dim, dim, arma::fill::ones) * 2;
+    arma::cube c2 = arma::cube(dim, dim, dim, arma::fill::ones) * 3;
+    TestClass_Derived<arma::cube> tcc;
+    arma::cube c3 = tcc.add(c1, c2);
+    c3.print("c3");
+
+    TestClass_Fixed m;
+    m.print("m");
+    m.mul(fm2, fm2).print("fm2 * fm2");
+    m.add(fm2, fm2).print("fm2 + fm2");
 
     return 0;
 
