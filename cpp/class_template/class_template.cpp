@@ -1,5 +1,3 @@
-#include <string>
-
 #include "class_template.h"
 
 template <class T>
@@ -17,6 +15,7 @@ TestClass<T>::~TestClass()
 // template TestClass<arma::mat>::TestClass() { t.ones(dim, dim); }
 // template TestClass<arma::mat>::~TestClass();
 
+// 'template <>' is needed for when the *implementation* is different.
 template <>
 TestClass<arma::vec>::TestClass()
 {
