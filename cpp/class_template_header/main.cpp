@@ -1,6 +1,11 @@
 #include "class_template_header.h"
 #include "consumer.h"
 
+// Explicit specialization can't go here if the template definition
+// (not declaration) is in a source file rather than a header file.
+
+template void consuming_function<arma::vec>(TestClass<arma::vec> *testclass);
+
 int main()
 {
 

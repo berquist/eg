@@ -12,14 +12,15 @@
 //     return;
 // }
 
-template <typename T>
-void consuming_function(
-    TestClass<T> *testclass
-    ) {
+// template <typename T>
+// void consuming_function(
+//     TestClass<T> *testclass
+//     ) {
 
-    std::cout << "testclass->dim_copy: " << testclass->dim_copy << std::endl;
+//     std::cout << "testclass->dim_copy: " << testclass->dim_copy << std::endl;
 
-    return;
-}
+//     return;
+// }
 
-consuming_function(TestClass<arma::vec> *testclass);
+// Explicit specialization.
+// template void consuming_function<arma::vec>(TestClass<arma::vec> *testclass);
