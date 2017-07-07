@@ -3,6 +3,8 @@
 
 #include <armadillo>
 
+namespace foo {
+
 template <class T>
 class TestClass {
 
@@ -31,15 +33,6 @@ public:
 
 };
 
-template <class T>
-class TestClass_Derived : public TestClass<T> {
-
-public:
-
-    T add(T &t1, T &t2) const {
-        return t1 + t2;
-    }
-
-};
+} // namespace foo
 
 #endif // CLASS_TEMPLATE_H_

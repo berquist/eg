@@ -1,7 +1,6 @@
 #include "class_template.h"
 #include "consumer.h"
 
-
 int main()
 {
 
@@ -11,9 +10,9 @@ int main()
     arma::vec fv3(dim);
     fv3.fill(f);
 
-    TestClass<arma::vec> tcv3 = TestClass<arma::vec>(fv3);
+    foo::TestClass<arma::vec> tcv3(fv3);
 
-    consumer(&tcv3);
+    foo::consumer(&tcv3);
 
     return 0;
 
