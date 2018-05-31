@@ -5,7 +5,7 @@
 
 int main() {
 
-    const size_t dim_r = 100;
+    const size_t dim_r = 10;
     const size_t dim_c = 3;
     const size_t n_elem = dim_r * dim_c;
 
@@ -18,6 +18,7 @@ int main() {
     arma::imat m(cv, dim_r, dim_c);
     m = m.t();
     // m.print("m");
+    m.save("arma_sword_mat.dat", arma::arma_ascii);
 
     uint64 start;
     uint64 stop;
@@ -34,6 +35,7 @@ int main() {
     per = elapsed / n_iter;
     // v3.print("v");
     std::cout << "v3 (vectorise, declare outside): " << elapsed << std::endl;
+    v3.save("arma_sword_vec.dat", arma::arma_ascii);
 
     start = GetTimeMs64();
     for (uint64 i = 0; i < n_iter; i++) {

@@ -1,4 +1,5 @@
 *.a
 *.html
 *.x
+a.out
 build/

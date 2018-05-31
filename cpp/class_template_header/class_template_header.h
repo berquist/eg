@@ -34,8 +34,6 @@ public:
 template <class T>
 class TestClass_Derived : public TestClass<T> {
 
-private:
-
 public:
 
     T add(T &t1, T &t2) const {
@@ -45,8 +43,6 @@ public:
 };
 
 class TestClass_Fixed : public TestClass_Derived< arma::mat > {
-
-private:
 
 public:
 

@@ -18,4 +18,8 @@ void consuming_function(
     return;
 }
 
+void consuming_function_2(
+    TestClass<arma::vec> *testclass
+    );
+
 #endif // CONSUMER_H_

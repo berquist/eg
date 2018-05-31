@@ -47,6 +47,7 @@ int main()
     m.add(fm2, fm2).print("fm2 + fm2");
 
     consuming_function(&tcv3);
+    consuming_function_2(&tcv3);
 
     return 0;
 

@@ -28,7 +28,10 @@ int main() {
     //     B.row(i) = B.row(i) % b;
     // This is matrix multiplication!
     // B *= b;
-    B.print("% (2)");
+
+    // order doesn't matter
+    arma::mat C = B.each_row() % b.t();
+    C.print("% (2)");
 
     return 0;
 }

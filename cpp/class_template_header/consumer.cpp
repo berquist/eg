@@ -24,3 +24,12 @@
 
 // Explicit specialization.
 // template void consuming_function<arma::vec>(TestClass<arma::vec> *testclass);
+
+void consuming_function_2(
+    TestClass<arma::vec> *testclass
+    ) {
+
+    std::cout << 17 << std::endl;
+
+    return;
+}
