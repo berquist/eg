@@ -27,3 +27,5 @@ if(${ARMADILLO_FOUND})
 endif()
 
 add_subdirectory(class_template_2)
+add_subdirectory(class_template_header)
+add_subdirectory(class_template_function_call)
