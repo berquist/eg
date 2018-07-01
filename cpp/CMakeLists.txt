@@ -30,3 +30,5 @@ if(${ARMADILLO_FOUND})
         target_link_libraries(${file}.x ${ARMADILLO_LIBRARIES})
     endforeach(file)
 endif()
+
+add_subdirectory(eigen)
