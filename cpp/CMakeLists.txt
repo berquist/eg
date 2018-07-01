@@ -4,6 +4,10 @@ project(eg CXX)
 set(SRC
     int_size_t_comparison
     string_conversion
+    test_openmp_2
+    test_openmp_copyprivate
+    test_openmp
+    test_template_inheritance
     )
 
 message(STATUS "SRC: ${SRC}")
