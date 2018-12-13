@@ -1,0 +1,68 @@
+import numpy as np
+import numba
+from numba import float64
+
+
+def random(dim, a=0.0, b=1.0):
+    return (b - a) * np.random.random(dim) + a
+
+
+@numba.njit(float64(float64))
+def lj_numba(r):
+    sr6 = (1./r) ** 6
+    return 4. * (sr6 * sr6 - sr6)
+
+
+@numba.njit(float64(float64[:], float64[:]))
+def distance_numba(atom1, atom2):
+    dx = atom2[0] - atom1[0]
+    dy = atom2[1] - atom1[1]
+    dz = atom2[2] - atom1[2]
+    return (dx * dx + dy * dy + dz * dz) ** 0.5
+
+
+@numba.njit(float64(float64[:, :]))
+def potential_numba(cluster):
+    energy = 0.0
+    for i in range(len(cluster) - 1):
+        # operate on the upper triangle
+        for j in range(i + 1, len(cluster)):
+            r = distance_numba(cluster[i], cluster[j])
+            e = lj_numba(r)
+            energy += e
+    return energy
+
+
+# @numba.njit(float64(float64))
+# def lj_numba_like_numpy(r):
+#     sr6 = (1./r) ** 6
+#     pot = 4. * (sr6 * sr6 - sr6)
+#     return pot
+
+
+# # @numba.njit(float64[:, :](float64[:, :]))
+# @numba.njit
+# def distances_numba_like_numpy(cluster):
+#     diff = cluster[:, np.newaxis, :] - cluster[np.newaxis, :, :]
+#     mat = np.sqrt((diff * diff).sum(-1))
+#     return mat
+
+
+# # @numba.njit(float64(float64[:, :]))
+# @numba.njit
+# def potential_numba_like_numpy(cluster):
+#     d = distances_numba_like_numpy(cluster)
+#     dtri = np.triu(d)
+#     energy = lj_numba_like_numpy(dtri[dtri > 1e-6]).sum()
+#     return energy
+
+
+if __name__ == "__main__":
+
+    natoms = 1000
+    cluster = random((natoms, 3), -100, 100)
+    # distances = distances_numpy(cluster)
+    # distances = distances[distances > 1e-6]
+
+    %timeit potential_numba(cluster)
+    # %timeit potential_numba_like_numpy(cluster)

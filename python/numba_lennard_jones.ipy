@@ -1,0 +1,154 @@
+import numpy as np
+import numba
+
+
+def random(dim, a=0.0, b=1.0):
+    return (b - a) * np.random.random(dim) + a
+
+
+def lj_numpy(r):
+    sr6 = (1./r) ** 6
+    pot = 4. * (sr6 * sr6 - sr6)
+    return pot
+
+
+def distances_numpy(cluster):
+    diff = cluster[:, np.newaxis, :] - cluster[np.newaxis, :, :]
+    mat = np.sqrt((diff * diff).sum(-1))
+    return mat
+
+
+def potential_numpy(cluster):
+    d = distances_numpy(cluster)
+    dtri = np.triu(d)
+    energy = lj_numpy(dtri[dtri > 1e-6]).sum()
+    return energy
+
+
+# Numba function operating on mostly arrays. This is not a fast implementation
+# but is the closest to the NumPy version.
+
+
+@numba.njit
+def lj_numba_array(r):
+    sr6 = (1./r) ** 6
+    pot = 4. * (sr6 * sr6 - sr6)
+    return pot
+
+
+@numba.njit
+def distances_numba_array(cluster):
+    # Original: diff = cluster[:, np.newaxis, :] - cluster[np.newaxis, :, :]
+    # Since np.newaxis is not suppoerted, we use reshape to do this
+    diff = (cluster.reshape(cluster.shape[0], 1, cluster.shape[1]) -
+            cluster.reshape(1, cluster.shape[0], cluster.shape[1]))
+    mat = diff * diff
+    # Original: mat = mat.sum(-1)
+    # Since axis argument is not supported, we write the loop out
+    out = np.empty(mat.shape[:2], dtype=mat.dtype)
+    for i in np.ndindex(out.shape):
+        out[i] = mat[i].sum()
+    return np.sqrt(out)
+
+
+@numba.njit
+def potential_numba_array(cluster):
+    d = distances_numba_array(cluster)
+    # Original: dtro = np.triu(d)
+    # np.triu is not supported, so write by own loop to clear the
+    # lower triangle
+    for i in range(d.shape[0]):
+        for j in range(d.shape[1]):
+            if i > j:
+                d[i, j] = 0
+    # Original: lj_numba_array(d[d > 1e-6]).sum()
+    # d[d > 1e-6] is not supported due to the indexing with boolean
+    # array. Replace with custom loop.
+    energy = 0.0
+    for v in d.flat:
+        if v > 1e-6:
+            energy += lj_numba_array(v)
+    return energy
+
+
+# Numba function operating on scalar mostly. This version has the algorithm
+# rewritten to operate on a scalar at a time in manually written loops.
+
+
+@numba.njit
+def lj_numba_scalar(r):
+    sr6 = (1./r) ** 6
+    pot = 4. * (sr6 * sr6 - sr6)
+    return pot
+
+
+@numba.njit
+def distance_numba_scalar(atom1, atom2):
+    dx = atom2[0] - atom1[0]
+    dy = atom2[1] - atom1[1]
+    dz = atom2[2] - atom1[2]
+
+    r = (dx * dx + dy * dy + dz * dz) ** 0.5
+
+    return r
+
+
+@numba.njit
+def potential_numba_scalar(cluster):
+    energy = 0.0
+    for i in range(len(cluster) - 1):
+        # operate on the upper triangle
+        for j in range(i + 1, len(cluster)):
+            r = distance_numba_scalar(cluster[i], cluster[j])
+            e = lj_numba_scalar(r)
+            energy += e
+    return energy
+
+
+# This enables the _prange_ feature on numba_scalar.
+
+
+@numba.njit
+def lj_numba_scalar_prange(r):
+    sr6 = (1./r) ** 6
+    pot = 4. * (sr6 * sr6 - sr6)
+    return pot
+
+
+@numba.njit
+def distance_numba_scalar_prange(atom1, atom2):
+    dx = atom2[0] - atom1[0]
+    dy = atom2[1] - atom1[1]
+    dz = atom2[2] - atom1[2]
+
+    r = (dx * dx + dy * dy + dz * dz) ** 0.5
+
+    return r
+
+
+@numba.njit(parallel=True)
+def potential_numba_scalar_prange(cluster):
+    energy = 0.0
+    # numba.prange requires parallel=True flag to compile. It causes the loop
+    # to run in parallel across multiple threads.
+    for i in numba.prange(len(cluster) - 1):
+        # operate on the upper triangle
+        for j in range(i + 1, len(cluster)):
+            r = distance_numba_scalar_prange(cluster[i], cluster[j])
+            e = lj_numba_scalar_prange(r)
+            energy += e
+    return energy
+
+
+
+if __name__ == "__main__":
+
+    natoms = 1000
+    cluster = random((natoms, 3), -100, 100)
+    # distances = distances_numpy(cluster)
+    # distances = distances[distances > 1e-6]
+
+    %timeit potential_numpy(cluster)
+    %timeit potential_numba_array(cluster)
+    %timeit potential_numba_scalar(cluster)
+    %timeit potential_numba_scalar_prange(cluster)

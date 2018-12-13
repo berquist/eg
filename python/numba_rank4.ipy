@@ -1,0 +1,48 @@
+import numpy as np
+import numba
+from numba import float64
+
+
+# da, db, dc, dd = 2, 4, 5, 3
+da, db, dc, dd = 20, 40, 50, 30
+
+# a = np.random.randint(0, 10, size=(da, db, dc, dd))
+# b = np.random.randint(0, 10, size=(da, db, dc, dd))
+a = np.random.random((da, db, dc, dd))
+b = np.random.random((da, db, dc, dd))
+
+
+def test_explicit():
+    s = 0
+    for iia in range(da):
+        for iib in range(db):
+            for iic in range(dc):
+                for iid in range(dd):
+                    s += a[iia, iib, iic, iid] * b[iia, iib, iic, iid]
+    return s
+
+
+def test_einsum1():
+    return np.einsum('abcd,abcd', a, b)
+
+
+def test_einsum2():
+    return np.einsum('abcd,abcd->', a, b)
+
+
+@numba.njit(float64())
+def test_explicit_numba():
+    s = 0
+    for iia in range(da):
+        for iib in range(db):
+            for iic in range(dc):
+                for iid in range(dd):
+                    s += a[iia, iib, iic, iid] * b[iia, iib, iic, iid]
+    return s
+
+
+if __name__ == "__main__":
+    %timeit test_explicit()
+    %timeit test_einsum1()
+    %timeit test_einsum2()
+    %timeit test_explicit_numba()
