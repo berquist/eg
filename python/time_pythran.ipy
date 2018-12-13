@@ -1,0 +1,62 @@
+from random import random
+import numpy as np
+import numba
+from numba import float64
+
+from test_pythran import dprod
+
+
+def dprod_naive(l0, l1):
+    return sum(x * y for x, y in zip(l0, l1))
+
+
+# @numba.njit
+# def dprod_numba_comprehension(l0, l1):
+#     return sum(x * y for x, y in zip(l0, l1))
+
+
+# @numba.njit(float64(float64[:], float64[:]))
+@numba.njit
+def dprod_numba_cstyle(l0, l1):
+    s = 0.0
+    # assume inputs are the same length
+    _len = len(l0)
+    for i in range(_len):
+        s += l0[i] * l1[i]
+    return s
+
+
+if __name__ == "__main__":
+    print('-' * 70)
+    print(help(dprod))
+    print('-' * 70)
+    print(help(dprod_naive))
+    print('-' * 70)
+
+    dim = int(1e6)
+    rl0 = [random() for _ in range(dim)]
+    rl1 = [random() for _ in range(dim)]
+    rnl0 = np.random.random(dim)
+    rnl1 = np.random.random(dim)
+
+
+    print(dprod_naive(rl0, rl1))
+    print(dprod(rl0, rl1))
+    print(np.dot(rl0, rl1))
+    print(dprod_numba_cstyle(rl0, rl1))
+
+    print("Python lists")
+
+    %timeit dprod_naive(rl0, rl1)
+    %timeit np.dot(rl0, rl1)
+    %timeit dprod(rl0, rl1)
+    # %timeit dprod_numba_comprehension(rl0, rl1)
+    %timeit dprod_numba_cstyle(rl0, rl1)
+
+    print("NumPy arrays")
+
+    %timeit dprod_naive(rnl0, rnl1)
+    %timeit np.dot(rnl0, rnl1)
+    # %timeit dprod(rnl0, rnl1)
+    # %timeit dprod_numba_comprehension(rnl0, rnl1)
+    %timeit dprod_numba_cstyle(rnl0, rnl1)
