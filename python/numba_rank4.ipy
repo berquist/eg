@@ -1,6 +1,10 @@
 import numpy as np
 import numba
 from numba import float64
+from rank4 import rank4_simple
+# This doesn't work because it isn't in the shared library.
+# from rank4_pythran import rank4_simple
+from rank4_pythran import rank4_simple2_pythran
 
 
 # da, db, dc, dd = 2, 4, 5, 3
@@ -41,8 +45,27 @@ def test_explicit_numba():
     return s
 
 
+def test_imported_rank4_simple():
+    return rank4_simple(a, b)
+
+
+# @numba.njit(float64())
+# def test_imported_rank4_simple_numba():
+#     return rank4_simple(a, b)
+
+
+def test_imported_rank4_simple2_pythran():
+    return rank4_simple2_pythran(a, b)
+
+
 if __name__ == "__main__":
-    %timeit test_explicit()
-    %timeit test_einsum1()
-    %timeit test_einsum2()
+    print("local")
+    %timeit (a + b).sum()
+    # %timeit test_explicit()
+    # %timeit test_einsum1()
+    # %timeit test_einsum2()
     %timeit test_explicit_numba()
+    print("imported")
+    # %timeit test_imported_rank4_simple()
+    # %timeit test_imported_rank4_simple_numba()
+    %timeit test_imported_rank4_simple2_pythran()
