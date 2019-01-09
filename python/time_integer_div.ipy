@@ -1,0 +1,10 @@
+# %timeit num = 123; num //= 10
+# %timeit num = 123; num = int(str(num)[:-1])
+%timeit num = 123
+num = 123
+%timeit str(num)
+%timeit "123"
+%timeit int("123")
+%timeit int(str(num))
+%timeit int(str(num)[:-1])
+# %timeit num = 123
