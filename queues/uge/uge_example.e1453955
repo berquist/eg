@@ -1,0 +1,6 @@
++ export PATH=/nas/home/berquist/opt/apps/python/miniconda3/bin:/lfs_ssd/uge-tmpdir/1453955.1.all.q:/usr/local/bin:/bin:/usr/bin
++ PATH=/nas/home/berquist/opt/apps/python/miniconda3/bin:/lfs_ssd/uge-tmpdir/1453955.1.all.q:/usr/local/bin:/bin:/usr/bin
++ env
++ sort
+++ command -v python
++ /nas/home/berquist/opt/apps/python/miniconda3/bin/python sample.py
