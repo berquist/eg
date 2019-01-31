@@ -18,3 +18,4 @@ endforeach(file)
 
 add_subdirectory(armadillo)
 add_subdirectory(eigen)
+add_subdirectory(xtensor)
