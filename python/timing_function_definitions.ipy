@@ -1,6 +1,7 @@
 #!/usr/bin/env ipython
 # coding: utf-8
 
+
 class Class1:
     def a(self):
         def b():
@@ -8,21 +9,26 @@ class Class1:
         x = b()
         return
 
+
 class Class2:
     @staticmethod
     def b():
         return 42
+
     def a(self):
         x = Class2.b()
         return
-    
+
+
 def _b_global():
     return 42
+
 
 class Class3:
     def a(self):
         x = _b_global()
         return
+
 
 if __name__ == "__main__":
 
