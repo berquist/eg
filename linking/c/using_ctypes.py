@@ -1,9 +1,13 @@
 import ctypes
 
+
 if __name__ == "__main__":
 
     mylib = ctypes.CDLL("build/libmylib.so")
     print(mylib.add1(4))
+
+    # Soe mice instructions are in
+    # https://stackoverflow.com/questions/26277322/passing-arrays-with-ctypes
 
     daxpy = mylib.daxpy
     daxpy.argypes = [
@@ -18,6 +22,7 @@ if __name__ == "__main__":
     y = [1.0, 1.0, 1.0]
     alpha = 1.0
     n = len(x)
+    # https://stackoverflow.com/questions/4145775/how-do-i-convert-a-python-list-into-a-c-array-by-using-ctypes
     cx = (ctypes.c_double * n)(*x)
     cy = (ctypes.c_double * n)(*y)
     daxpy(n, ctypes.c_double(alpha), cx, cy)
