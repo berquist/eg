@@ -54,7 +54,11 @@ macro_rules! create_unchecked_nonnull {
     };
 }
 
-trait UncheckedNonNull<T> {
+trait UncheckedNonNull<T>
+where
+    T: ?Sized,
+{
+    /// Create a NonNull pointer via unchecked unwrap, but panic on failure in debug mode.
     fn to_unchecked_nonnull(self) -> ptr::NonNull<T>;
 }
 
