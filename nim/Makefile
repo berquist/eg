@@ -6,3 +6,7 @@ greetings-release: greetings.nim
 
 tutorial_1: tutorial_1.nim
 	nim c -r --listCmd tutorial_1.nim
+
+tutorial_1_modules: tutorial_1_modules.nim
+	nim c -r --listCmd tutorial_1_modules.nim
+	nim c -r --listCmd C.nim

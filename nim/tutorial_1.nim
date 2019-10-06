@@ -287,3 +287,82 @@ var person2 = person1
 person2.age += 14
 let person3 = Person(age: 12, name: "Quentin")
 echo person3
+# not every member needs to be specified
+let person4 = Person(age: 3)
+# Unspecified members will be initialized with their default values.
+doAssert person4.name == ""
+assert person4.name == ""
+# What's the difference between `assert` and `doAssert`?
+
+type
+  Person2* = object # the type is visible from other modules
+    name*: string   # the field of this type is visible from other modules
+    age: int        # the field of this type is _not_ visible from other modules
+
+type
+  Person3 = tuple
+    name: string
+    age: int
+
+  # Alternative syntax for an equivalent type.
+  PersonX = tuple[name: string, age: int]
+
+  # anonymous syntax
+  PersonY = (string, int)
+
+var
+  personT1: Person3
+  personT2: PersonX
+  personT3: PersonY
+personT1 = (name: "Peter", age: 30)
+# Person3 and PersonX are equivalent
+personT2 = personT1
+# Create a tuple with anonymous fields:
+personT3 = ("Peter", 30)
+# A tuple with anonymous fields is compatible with a tuple that has field
+# names.
+personT1 = personT3
+personT3 = personT1
+
+# You don't need to declare tuples in a separate type section.
+var building: tuple[street: string, number: int]
+building = ("Rue de Percebe", 13)
+echo building
+
+# The following line doesn't compile because they're structurally different,
+# despite both being tuples.
+# personT1 = building
+# type mismatch: got <tuple[street: string, number: int]> but expected 'Person3 = tuple[name: string, age: int]'
+
+import os
+
+let
+  path = "usr/local/nimc.html"
+  (dir, name, ext) = splitFile(path)
+  baddir, badname, badext = splitFile(path)
+echo dir
+echo name
+echo ext
+echo baddir
+echo badname
+echo badext
+
+type
+  Node = ref object
+    le, ri: Node
+    data: int
+var
+  n: Node
+new(n)
+n.data = 9
+echo repr(n)
+
+proc echoItem(x: int) = echo x
+
+proc forEach(action: proc (x: int)) =
+  const
+    data = [2, 3, 5, 7, 11]
+  for d in items(data):
+    action(d)
+
+forEach(echoItem)
