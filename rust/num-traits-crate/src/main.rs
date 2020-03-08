@@ -9,6 +9,13 @@ fn add_to_pi<T: Float + FloatConst>(x: T) -> T {
     x + T::PI()
 }
 
+fn add_to_pi_two<T>(x: T) -> T
+where
+    T: Float + FloatConst,
+{
+    x + T::PI()
+}
+
 fn main() {
     let pi_32: f32 = FloatConst::PI();
     let pi_64: f64 = FloatConst::PI();
@@ -16,6 +23,8 @@ fn main() {
     println!("{}", pi_64);
     println!("{}", add_to_pi(4.0_f32));
     println!("{}", add_to_pi(4.0_f64));
+    println!("{}", add_to_pi_two(4.0_f32));
+    println!("{}", add_to_pi_two(4.0_f64));
     println!("{}", add_point_two_five(2.0_f64));
     println!("{}", add_point_two_five(2.0_f32));
 }
