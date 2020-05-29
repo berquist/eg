@@ -1,8 +1,8 @@
-// use std::ops::Add;
-
 extern crate nalgebra as na;
 use na::Matrix4;
 use ndarray::{Array, Ix2};
+use ndarray_linalg::*;
+use ndarray_rand::*;
 
 fn main() {
     let dim = 4;
@@ -38,28 +38,25 @@ fn main() {
     let bm1: Box<Matrix4<f64>> = Box::new(Matrix4::new_random());
     let bm2: Box<Matrix4<f64>> = Box::new(Matrix4::new_random());
     let bm3 = perform_add_box_nalgebra(&bm1, &bm2);
-    println!("{}", bm1);
-    println!("{}", bm2);
-    println!("{}", bm3);
 
     // Try doing stuff in place.
     let mut m4 = Matrix4::new_random();
-    println!("{}", m4);
     // m4 += *bm3;
     perform_add_mut_inplace_nalgebra(&mut m4, &*bm3);
-    println!("{}", m4);
     let mut nd4: Array<u64, _> = Array::ones((dim, dim));
-    println!("{}", nd4);
     // This line doesn't work
     // nd4 += nd1;
     // nd4 = nd4 + nd1;
     perform_add_mut_inplace_ndarray(&mut nd4, &nd3);
-    println!("{}", nd4);
-}
 
-// fn perform_add<T: Add>(a: &T, b: &T) -> T {
-//     return a + b;
-// }
+    println!("SVD");
+    let inp1 = Array::random((4, 4), rand_distr::Uniform::new(0.0, 10.0));
+    println!("{}", inp1);
+    let (u, s, vt) = inp1.svd(true, true).unwrap();
+    println!("{}", u.unwrap());
+    println!("{}", s);
+    println!("{}", vt.unwrap());
+}
 
 fn perform_add_nalgebra(a: &Matrix4<u64>, b: &Matrix4<u64>) -> Matrix4<u64> {
     a + b

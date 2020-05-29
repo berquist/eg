@@ -9,6 +9,9 @@ edition = "2018"
 [dependencies]
 nalgebra = "*"
 ndarray = "*"
+# `openblas` not working
+ndarray-linalg = { version = "*", features = ["netlib"] }
+ndarray-rand = "*"
 
 [dev-dependencies]
 criterion = "*"
