@@ -1,5 +1,5 @@
-// use std::cell::RefCell;
-
+extern crate nalgebra as na;
+use na::Matrix4;
 use ndarray::{Array, Ix2};
 
 pub fn add1_ret(m: &Array<f64, Ix2>) -> Array<f64, Ix2> {
@@ -29,12 +29,33 @@ pub fn add1_part_mut(m: &mut Array<f64, Ix2>) {
     // println!("{}", vm);
 }
 
-// pub fn add_1_refcell(m: &RefCell<Array<f64, Ix2>>) {
-//     let x = m.borrow_mut();
-//     // println!("{}", x);
-//     let shape = *x.shape();
-//     *x = *x + Array::ones((shape[0], shape[1]));
-// }
+pub fn perform_add_nalgebra(a: &Matrix4<u64>, b: &Matrix4<u64>) -> Matrix4<u64> {
+    a + b
+}
+
+pub fn perform_add_ndarray(a: &Array<u64, Ix2>, b: &Array<u64, Ix2>) -> Array<u64, Ix2> {
+    a + b
+}
+
+pub fn perform_add_mut_nalgebra(a: &mut Matrix4<u64>, b: &Matrix4<u64>, c: &Matrix4<u64>) {
+    *a += b + c;
+}
+
+pub fn perform_add_mut_ndarray(a: &mut Array<u64, Ix2>, b: &Array<u64, Ix2>, c: &Array<u64, Ix2>) {
+    *a = b + c;
+}
+
+pub fn perform_add_box_nalgebra(a: &Box<Matrix4<f64>>, b: &Box<Matrix4<f64>>) -> Box<Matrix4<f64>> {
+    Box::new(**a + **b)
+}
+
+pub fn perform_add_mut_inplace_nalgebra(a: &mut Matrix4<f64>, b: &Matrix4<f64>) {
+    *a += b;
+}
+
+pub fn perform_add_mut_inplace_ndarray(a: &mut Array<u64, Ix2>, b: &Array<u64, Ix2>) {
+    *a += b;
+}
 
 #[cfg(test)]
 mod tests {

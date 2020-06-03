@@ -4,6 +4,8 @@ use ndarray::{Array, Ix2};
 use ndarray_linalg::*;
 use ndarray_rand::*;
 
+use test_ndarray::*;
+
 fn main() {
     let dim = 4;
 
@@ -57,32 +59,4 @@ fn main() {
     println!("{}", u.unwrap());
     println!("{}", s);
     println!("{}", vt.unwrap());
-}
-
-fn perform_add_nalgebra(a: &Matrix4<u64>, b: &Matrix4<u64>) -> Matrix4<u64> {
-    a + b
-}
-
-fn perform_add_ndarray(a: &Array<u64, Ix2>, b: &Array<u64, Ix2>) -> Array<u64, Ix2> {
-    a + b
-}
-
-fn perform_add_mut_nalgebra(a: &mut Matrix4<u64>, b: &Matrix4<u64>, c: &Matrix4<u64>) {
-    *a += b + c;
-}
-
-fn perform_add_mut_ndarray(a: &mut Array<u64, Ix2>, b: &Array<u64, Ix2>, c: &Array<u64, Ix2>) {
-    *a = b + c;
-}
-
-fn perform_add_box_nalgebra(a: &Box<Matrix4<f64>>, b: &Box<Matrix4<f64>>) -> Box<Matrix4<f64>> {
-    Box::new(**a + **b)
-}
-
-fn perform_add_mut_inplace_nalgebra(a: &mut Matrix4<f64>, b: &Matrix4<f64>) {
-    *a += b;
-}
-
-fn perform_add_mut_inplace_ndarray(a: &mut Array<u64, Ix2>, b: &Array<u64, Ix2>) {
-    *a += b;
 }
