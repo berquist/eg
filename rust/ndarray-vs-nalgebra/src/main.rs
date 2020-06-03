@@ -44,9 +44,10 @@ fn main() {
     // m4 += *bm3;
     perform_add_mut_inplace_nalgebra(&mut m4, &*bm3);
     let mut nd4: Array<u64, _> = Array::ones((dim, dim));
-    // This line doesn't work
-    // nd4 += nd1;
-    // nd4 = nd4 + nd1;
+    // This line doesn't work without the reference:
+    // https://docs.rs/ndarray/0.13.1/ndarray/struct.ArrayBase.html#arithmetic-operations
+    nd4 += &nd1;
+    nd4 = nd4 + nd1;
     perform_add_mut_inplace_ndarray(&mut nd4, &nd3);
 
     println!("SVD");
@@ -79,10 +80,9 @@ fn perform_add_box_nalgebra(a: &Box<Matrix4<f64>>, b: &Box<Matrix4<f64>>) -> Box
 }
 
 fn perform_add_mut_inplace_nalgebra(a: &mut Matrix4<f64>, b: &Matrix4<f64>) {
-    // *a += b;
-    *a = *a + b;
+    *a += b;
 }
 
 fn perform_add_mut_inplace_ndarray(a: &mut Array<u64, Ix2>, b: &Array<u64, Ix2>) {
-    // *a = *a + b;
+    *a += b;
 }
