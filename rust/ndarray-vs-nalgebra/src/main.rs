@@ -1,6 +1,7 @@
+#![allow(unused_assignments)]
 extern crate nalgebra as na;
 use na::Matrix4;
-use ndarray::{Array, Ix2};
+use ndarray::Array;
 use ndarray_linalg::*;
 use ndarray_rand::*;
 
