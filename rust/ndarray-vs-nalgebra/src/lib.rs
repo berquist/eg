@@ -40,6 +40,15 @@ pub fn perform_add_mut_inplace_ndarray(a: &mut Array<u64, Ix2>, b: &Array<u64, I
     *a += b;
 }
 
+pub fn perform_add_ndarray_float(a: &Array<f64, Ix2>, b: &Array<f64, Ix2>) -> Array<f64, Ix2> {
+    a + b
+}
+
+// TODO const generics?
+pub fn perform_add_mut_inplace_ndarray_float(a: &mut Array<f64, Ix2>, b: &Array<f64, Ix2>) {
+    *a += b;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
