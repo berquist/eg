@@ -1,0 +1,76 @@
+---
+
+- name: Provision Vagrant
+  hosts: all
+  tasks:
+
+    - name: Say Hello
+      debug: msg="Hello Ansible"
+
+    - name: Install the Git package
+      apt: name=git state=present
+      sudo: yes
+      # become: root
+      # become_method: sudo
+
+    - name: Remove the Git package
+      apt: name=git state=absent
+      sudo: yes
+      # become: root
+      # become_method: sudo
+
+    - name: Install packages
+      apt: name= state=latest
+      sudo: yes
+      # become: root
+      # become_method: sudo
+      with_items:
+        - g++
+        - git
+        - ntp
+
+# https://www.ansibletutorials.com/update-upgrade-and-reboot.html
+- name: Upgrade and Reboot
+  hosts: all
+  tasks:
+
+    - name: Update System Package Cache
+      apt: update_cache=yes
+      sudo: yes
+
+    - name: Upgrade System Packages
+      apt: upgrade=full
+      sudo: yes
+
+    - name: Rebooting if needed...
+      command: shutdown -r now removes=/var/run/reboot-required
+      sudo: yes
+      async: 0
+      poll: 0
+      ignore_errors: true
+      register: restarted
+
+    - name: Waiting for reboot...
+      local_action: wait_for host=localhost port=2200 delay=15 state=started
+      sudo: no
+      when: restarted.changed
+
+# https://www.ansibletutorials.com/adding-users
+- name: Create a User
+  hosts: all
+  vars:
+    user_username: ansible
+    user_password: mysecretword
+    user_passfile: ./password.hash
+  tasks:
+
+    - name: Generate User Password file
+      shell: python ./password_hasher.py {{ user_password }} > {{ user_passfile }}
+      args:
+        creates: "{{ user_passfile }}"
+      delegate_to: localhost
+
+    - name: Ensure User is Present
+      user: name={{ user_username }} password={{ lookup('file', user_passfile) }} group=sudo generate_ssh_key=yes shell="/bin/bash" state=present
+      sudo: yes
+    # `ssh -p 2200 ansible@localhost` doesn't work?
