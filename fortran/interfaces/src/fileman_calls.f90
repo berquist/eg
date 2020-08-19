@@ -1,35 +1,3 @@
-subroutine fileman_byte (oper, filenum, datatype, length, offset, offtype, data)
-  integer, intent(in) :: oper, filenum, datatype, length, offset, offtype
-  character, intent(inout) :: data
-  write (*,*) "inside fileman_byte"
-  write (*,*) data
-end subroutine fileman_byte
-
-
-subroutine fileman_dp (oper, filenum, datatype, length, offset, offtype, data)
-  integer, intent(in) :: oper, filenum, datatype, length, offset, offtype
-  real (kind=8), intent(inout) :: data
-  write (*,*) "inside fileman_dp"
-  write (*,*) data
-end subroutine fileman_dp
-
-
-subroutine fileman_int (oper, filenum, datatype, length, offset, offtype, data)
-  integer, intent(in) :: oper, filenum, datatype, length, offset, offtype
-  integer, intent(inout) :: data
-  write (*,*) "inside fileman_int"
-  write (*,*) data
-end subroutine fileman_int
-
-
-subroutine fileman_lgcl (oper, filenum, datatype, length, offset, offtype, data)
-  integer, intent(in) :: oper, filenum, datatype, length, offset, offtype
-  logical, intent(inout) :: data
-  write (*,*) "inside fileman_lgcl"
-  write (*,*) data
-end subroutine fileman_lgcl
-
-
 program name
   use fileman_module
   implicit none
@@ -53,6 +21,13 @@ program name
   ! call fileman_lgcl(oper, filenum, datatype, length, offset, offtype, data_lgcl)
 
   ! Use the interface defined in the external module
+  ! if not set up properly, get linker errors like:
+  !
+  ! /usr/bin/ld: CMakeFiles/interface_example.x.dir/src/fileman_calls.f90.o: in function `MAIN__':
+  ! fileman_calls.f90:(.text+0x59): undefined reference to `fileman_byte_'
+  ! /usr/bin/ld: fileman_calls.f90:(.text+0x86): undefined reference to `fileman_dp_'
+  ! /usr/bin/ld: fileman_calls.f90:(.text+0xb3): undefined reference to `fileman_int_'
+  ! /usr/bin/ld: fileman_calls.f90:(.text+0xe0): undefined reference to `fileman_lgcl_'
   call fileman(oper, filenum, datatype, length, offset, offtype, data_byte)
   call fileman(oper, filenum, datatype, length, offset, offtype, data_dp)
   call fileman(oper, filenum, datatype, length, offset, offtype, data_int)
