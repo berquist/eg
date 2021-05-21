@@ -1,0 +1,5 @@
+# -*- mode: snakemake -*-
+
+rule all:
+    run:
+        print("hello, world!")

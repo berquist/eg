@@ -1,0 +1,5 @@
+# -*- mode: snakemake -*-
+
+rule all:
+    shell:
+        "echo 'hello, world!'"
