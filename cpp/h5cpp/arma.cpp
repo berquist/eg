@@ -113,13 +113,15 @@ file::File get_or_create_file(const std::string &filename) {
     file::File h5file;
     const fs::path fp(filename);
     if (!fs::exists(fp)) {
-        h5file = file::create(fp);        
+        h5file = file::create(fp);
     } else if (file::is_hdf5_file(fp)) {
-        // h5file = file::open(fp, file::AccessFlags::READWRITE);
+        h5file = file::open(fp, file::AccessFlags::READWRITE);
         // for testing
-        h5file = file::create(fp, file::AccessFlags::TRUNCATE);        
+        // h5file = file::create(fp, file::AccessFlags::TRUNCATE);
     } else {
-        throw std::runtime_error("non-HDF5 file already exists!");
+        std::ostringstream os;
+        os << "non-HDF5 file already exists: " << filename;
+        throw std::runtime_error(os.str());
     }
     return h5file;
 }
