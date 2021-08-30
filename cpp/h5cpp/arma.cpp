@@ -140,6 +140,16 @@ namespace hdf5 {
             }
         };
     }
+    namespace datatype {
+        template<> class TypeTrait<arma::Col<double> > {
+        public:
+            using Type = arma::Col<double>;
+            using TypeClass = Float;
+            static TypeClass create(const Type & = Type()) {
+                return TypeTrait<double>::create();
+            }
+        };
+    }
 }
 
 int main() {
@@ -152,23 +162,37 @@ int main() {
 
     const size_t dim_big = 20;
     const arma::Col<double> rv1(dim_big, arma::fill::randn);
-    rv1.print();
+    rv1.print("rv1 create");
     rv1.save(arma::hdf5_name(filename, "/vecs/rv1", arma::hdf5_opts::append));
 
     const arma::mat rm1(dim_big, dim_big, arma::fill::randn);
-    rm1.print();
+    // rm1.print();
     rm1.save(arma::hdf5_name(filename, "/mats/rm1", arma::hdf5_opts::append));
 
     const arma::Cube<double> rc1(2, 3, 4, arma::fill::randn);
     const arma::Cube<arma::sword> rc2(2, 3, 4, arma::fill::zeros);
-    rc1.print();
-    rc2.print();
+    // rc1.print();
+    // rc2.print();
     rc1.save(arma::hdf5_name(filename, "/cubes/rc1", arma::hdf5_opts::append));
     rc2.save(arma::hdf5_name(filename, "/cubes/rc2", arma::hdf5_opts::append));
 
-    const auto dtype = datatype::create<arma::Col<double> >();
-    const auto dspace = dataspace::create(rv1);
-    auto dset = root.create_dataset("rv1_2", dtype, dspace);
+    // Demonstrate the proper h5cpp-based approach of saving to and reading
+    // from an HDF5 file.
+
+    const datatype::Float dtype = datatype::create<arma::Col<double> >();
+    const dataspace::Simple dspace = dataspace::create(rv1);
+    node::Dataset dset = root.create_dataset("rv1_2", dtype, dspace);
+    dset.write(rv1);
+
+    arma::Col<double> rv1_read(dim_big);
+    dset.read(rv1_read);
+    rv1_read.print("rv1 read");
+
+    // You can't specify a full path like this, you need to use the full dataset constructor.
+    // auto dset2 = root.create_dataset("/vecs/rv1_3", dtype, dspace);
+    const Path p2("/vecs/rv1_3");
+    node::Dataset dset2(root, p2, dtype, dspace);
+    dset2.write(rv1);
 
     return 0;
 }
