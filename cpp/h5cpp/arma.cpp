@@ -154,10 +154,32 @@ namespace hdf5 {
     }
 }
 
+void write(const arma::Col<double> &value, const file::File &h5cpp_file, const std::string &path) {
+    const Path h5cpp_path(path);
+    const node::Group root = h5cpp_file.root();
+    const datatype::Float dtype = datatype::create<arma::Col<double> >();
+    const dataspace::Simple dspace = dataspace::create(value);
+    const node::Dataset dset(root, h5cpp_path, dtype, dspace);
+    dset.write(value);
+}
+
+void read(const file::File &h5cpp_file, const std::string &path, arma::Col<double> &value) {
+    const Path h5cpp_path(path);
+    const node::Group root = h5cpp_file.root();
+    const datatype::Float dtype = datatype::create<arma::Col<double> >();
+    // TODO blow up
+    // if (!root.has_dataset(h5cpp_path)) {
+    // }
+    const node::Dataset dset = root.get_dataset(h5cpp_path);
+    // FIXME set shape of value
+    // value.res
+    dset.read(value);
+}
+
 int main() {
     const std::string filename("arma.h5");
-    file::File file = get_or_create_file(filename);
-    node::Group root = file.root();
+    const file::File file = get_or_create_file(filename);
+    const node::Group root = file.root();
 
     // Demonstrate the "pure" Armadillo-based approach of saving to an HDF5
     // file.
@@ -183,7 +205,7 @@ int main() {
 
     const datatype::Float dtype = datatype::create<arma::Col<double> >();
     const dataspace::Simple dspace = dataspace::create(rv1);
-    node::Dataset dset = root.create_dataset("rv1_2", dtype, dspace);
+    const node::Dataset dset = root.create_dataset("rv1_2", dtype, dspace);
     dset.write(rv1);
 
     arma::Col<double> rv1_read(dim_big);
@@ -193,8 +215,19 @@ int main() {
     // You can't specify a full path like this, you need to use the full dataset constructor.
     // auto dset2 = root.create_dataset("/vecs/rv1_3", dtype, dspace);
     const Path p2("/vecs/rv1_3");
-    node::Dataset dset2(root, p2, dtype, dspace);
+    const node::Dataset dset2(root, p2, dtype, dspace);
     dset2.write(rv1);
+
+    // Can we overwrite an existing dataset with data that has the same shape? Yes.
+    const arma::Col<double> rv2(dim_big, arma::fill::randn);
+    rv2.print("rv2");
+    dset2.write(rv2);
+
+    write(rv2, file, "/vecs/rv2");
+
+    arma::Col<double> rv3;
+    read(file, "/vecs/rv2", rv3);
+    rv3.print("rv3 (that is rv2)");
 
     return 0;
 }
