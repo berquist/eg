@@ -135,16 +135,18 @@ file::File get_or_create_file(const std::string &filename) {
 template <typename T>
 void write(const file::File &h5cpp_file, const std::string &path, const T &value) {
     const Path h5cpp_path(path);
+    property::LinkCreationList lcpl;
+    lcpl.enable_intermediate_group_creation();
     const dataspace::Simple dspace = dataspace::create(value);
-    const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<T>(), dspace);
+    const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<T>(), dspace, lcpl);
     dset.write(value);
 }
 
 void write(const file::File &h5cpp_file, const std::string &path, const std::string &value) {
     const Path h5cpp_path(path);
-    // const dataspace::Scalar dspace = dataspace::create(value);
-    // const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<std::string>(), dspace);
-    const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<std::string>());
+    property::LinkCreationList lcpl;
+    lcpl.enable_intermediate_group_creation();
+    const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<std::string>(), dataspace::create(value), lcpl);
     dset.write(value);
 }
 
@@ -224,6 +226,8 @@ int main() {
     // will transposed from what's expected, since the storage mechanism
     // preserves Armadillo's use of column-major memory layout (Fortran)
     // rather than row-major (C).
+    //
+    // Armadillo also seems to handle intermediate path creation properly...
 
     const size_t dim_big = 20;
     const arma::Col<double> rv1(dim_big, arma::fill::randn);
@@ -279,6 +283,7 @@ int main() {
 
     arma::imat rm2 = arma::randi<arma::imat>(6, 7, arma::distr_param(-10, +20));
     write(file, "/mats/rm2", rm2);
+    write(file, "/nested/mats/rm2", rm2);
 
     const std::string mystring("I am just a string");
     write(file, "/s1", mystring);
