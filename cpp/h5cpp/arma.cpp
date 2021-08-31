@@ -38,84 +38,84 @@ std::ostream& operator<<(std::ostream &os, const std::vector<T> &v) {
     return os;
 }
 
-void createFile() {
-    file::File File = file::create("SomeFile.hdf5", file::AccessFlags::TRUNCATE);
-    node::Group RootGroup = File.root();
+// void createFile() {
+//     file::File File = file::create("SomeFile.hdf5", file::AccessFlags::TRUNCATE);
+//     node::Group RootGroup = File.root();
 
-    std::vector<int> Data{1, 2, 3, 4, 5, 6};
-    Dimensions Shape{2, 3};
-    Dimensions MaxShape{dataspace::Simple::UNLIMITED, 3};
-    Dimensions ChunkSize{512, 3};
-    dataspace::Simple Dataspace{Shape, MaxShape};
-    datatype::Datatype Datatype = datatype::create<std::int32_t>();
-    auto Dataset = node::ChunkedDataset(RootGroup, "test_data", Datatype,
-                                        Dataspace, ChunkSize);
-    Dataset.write(Data);
-}
+//     std::vector<int> Data{1, 2, 3, 4, 5, 6};
+//     Dimensions Shape{2, 3};
+//     Dimensions MaxShape{dataspace::Simple::UNLIMITED, 3};
+//     Dimensions ChunkSize{512, 3};
+//     dataspace::Simple Dataspace{Shape, MaxShape};
+//     datatype::Datatype Datatype = datatype::create<std::int32_t>();
+//     auto Dataset = node::ChunkedDataset(RootGroup, "test_data", Datatype,
+//                                         Dataspace, ChunkSize);
+//     Dataset.write(Data);
+// }
 
-int example() {
-    createFile();
-    auto AnotherFile = file::open("SomeFile.hdf5");
-    auto RootGroup = AnotherFile.root();
-    auto Dataset = RootGroup.get_dataset("test_data");
-    dataspace::Simple Dataspace(Dataset.dataspace());
-    auto Dimensions = Dataspace.current_dimensions();
-    auto MaxDimensions = Dataspace.maximum_dimensions();
-    std::cout << "Dataset dimensions\n";
-    std::cout << "   Current | Max\n";
-    for (int i = 0; i < Dimensions.size(); i++) {
-        std::cout << "i:" << i << "      " << Dimensions[i] << " | "
-                  << MaxDimensions[i] << "\n";
-    }
+// int example() {
+//     createFile();
+//     auto AnotherFile = file::open("SomeFile.hdf5");
+//     auto RootGroup = AnotherFile.root();
+//     auto Dataset = RootGroup.get_dataset("test_data");
+//     dataspace::Simple Dataspace(Dataset.dataspace());
+//     auto Dimensions = Dataspace.current_dimensions();
+//     auto MaxDimensions = Dataspace.maximum_dimensions();
+//     std::cout << "Dataset dimensions\n";
+//     std::cout << "   Current | Max\n";
+//     for (int i = 0; i < Dimensions.size(); i++) {
+//         std::cout << "i:" << i << "      " << Dimensions[i] << " | "
+//                   << MaxDimensions[i] << "\n";
+//     }
 
-    auto CreationProperties = Dataset.creation_list();
-    auto ChunkDims = CreationProperties.chunk();
-    std::cout << "\nChunk size\n";
-    for (int i = 0; i < ChunkDims.size(); i++) {
-        std::cout << "i:" << i << "     " << ChunkDims[i] << "\n";
-    }
+//     auto CreationProperties = Dataset.creation_list();
+//     auto ChunkDims = CreationProperties.chunk();
+//     std::cout << "\nChunk size\n";
+//     for (int i = 0; i < ChunkDims.size(); i++) {
+//         std::cout << "i:" << i << "     " << ChunkDims[i] << "\n";
+//     }
 
-    std::cout << "\nData type\n";
-    auto Int32Type = datatype::create<std::int32_t>();
-    auto UInt32Type = datatype::create<std::uint32_t>();
-    auto FloatType = datatype::create<float>();
-    auto DataTypeClass = Dataset.datatype().get_class();
-    auto CurrentType = Dataset.datatype();
-    std::cout << "Is:        " << DataTypeClass << std::endl;
-    std::cout << "Is  int32: " << (Int32Type == CurrentType) << std::endl;
-    std::cout << "Is uint32: " << (UInt32Type == CurrentType) << std::endl;
-    std::cout << "Is  float: " << (FloatType == CurrentType) << std::endl;
+//     std::cout << "\nData type\n";
+//     auto Int32Type = datatype::create<std::int32_t>();
+//     auto UInt32Type = datatype::create<std::uint32_t>();
+//     auto FloatType = datatype::create<float>();
+//     auto DataTypeClass = Dataset.datatype().get_class();
+//     auto CurrentType = Dataset.datatype();
+//     std::cout << "Is:        " << DataTypeClass << std::endl;
+//     std::cout << "Is  int32: " << (Int32Type == CurrentType) << std::endl;
+//     std::cout << "Is uint32: " << (UInt32Type == CurrentType) << std::endl;
+//     std::cout << "Is  float: " << (FloatType == CurrentType) << std::endl;
 
-    std::cout << "\nAll elements\n";
-    std::vector<int> AllElements(Dataspace.size());
-    Dataset.read(AllElements);
-    for (auto Value : AllElements) {
-        std::cout << Value << " ";
-    }
-    std::cout << "\n\nRow access\n";
-    std::vector<int> RowData(static_cast<size_t>(Dimensions[1]));
-    for (size_t i = 0; i < Dimensions[0]; i++) {
-        dataspace::Hyperslab RowSelection{{i, 0}, {1, 3}};
-        Dataset.read(RowData, RowSelection);
-        std::cout << "i: " << i << " | ";
-        for (auto Value : RowData) {
-            std::cout << Value << " ";
-        }
-        std::cout << "\n";
-    }
-    std::cout << "\nElement access\n     j:0  j:1 j:2\n";
-    for (size_t i = 0; i < Dimensions[0]; i++) {
-        std::cout << "i:" << i << "    ";
-        for (size_t j = 0; j < Dimensions[1]; j++) {
-            int Value;
-            dataspace::Hyperslab ElementSelection{{i, j}, {1, 1}};
-            Dataset.read(Value, ElementSelection);
-            std::cout << Value << "    ";
-        }
-        std::cout << "\n";
-    }
-    return 0;
-}
+//     std::cout << "\nAll elements\n";
+//     std::vector<int> AllElements(Dataspace.size());
+//     Dataset.read(AllElements);
+//     for (auto Value : AllElements) {
+//         std::cout << Value << " ";
+//     }
+//     std::cout << "\n\nRow access\n";
+//     std::vector<int> RowData(static_cast<size_t>(Dimensions[1]));
+//     for (size_t i = 0; i < Dimensions[0]; i++) {
+//         dataspace::Hyperslab RowSelection{{i, 0}, {1, 3}};
+//         Dataset.read(RowData, RowSelection);
+//         std::cout << "i: " << i << " | ";
+//         for (auto Value : RowData) {
+//             std::cout << Value << " ";
+//         }
+//         std::cout << "\n";
+//     }
+//     std::cout << "\nElement access\n     j:0  j:1 j:2\n";
+//     for (size_t i = 0; i < Dimensions[0]; i++) {
+//         std::cout << "i:" << i << "    ";
+//         for (size_t j = 0; j < Dimensions[1]; j++) {
+//             int Value;
+//             dataspace::Hyperslab ElementSelection{{i, j}, {1, 1}};
+//             Dataset.read(Value, ElementSelection);
+//             std::cout << Value << "    ";
+//         }
+//         std::cout << "\n";
+//     }
+//     return 0;
+// }
 
 file::File get_or_create_file(const std::string &filename) {
     file::File h5file;
@@ -130,24 +130,6 @@ file::File get_or_create_file(const std::string &filename) {
         throw std::runtime_error(os.str());
     }
     return h5file;
-}
-
-template <typename T>
-void write(const file::File &h5cpp_file, const std::string &path, const T &value) {
-    const Path h5cpp_path(path);
-    property::LinkCreationList lcpl;
-    lcpl.enable_intermediate_group_creation();
-    const dataspace::Simple dspace = dataspace::create(value);
-    const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<T>(), dspace, lcpl);
-    dset.write(value);
-}
-
-void write(const file::File &h5cpp_file, const std::string &path, const std::string &value) {
-    const Path h5cpp_path(path);
-    property::LinkCreationList lcpl;
-    lcpl.enable_intermediate_group_creation();
-    const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<std::string>(), dataspace::create(value), lcpl);
-    dset.write(value);
 }
 
 arma::SizeMat hdf5_dimensions_to_arma_size_mat(const Dimensions &dims) {
@@ -168,11 +150,12 @@ arma::SizeCube hdf5_dimensions_to_arma_size_cube(const Dimensions &dims) {
     }
 }
 
+// loose implementations
+
 template <typename T>
 void read(const file::File &h5cpp_file, const std::string &path, arma::Col<T> &value) {
     const Path h5cpp_path(path);
-    const node::Group root = h5cpp_file.root();
-    const node::Dataset dset = root.get_dataset(h5cpp_path);
+    const node::Dataset dset = h5cpp_file.root().get_dataset(h5cpp_path);
     const dataspace::Simple dspace = dset.dataspace();
     value.set_size(hdf5_dimensions_to_arma_size_mat(dspace.current_dimensions()));
     dset.read(value);
@@ -181,8 +164,7 @@ void read(const file::File &h5cpp_file, const std::string &path, arma::Col<T> &v
 template <typename T>
 void read(const file::File &h5cpp_file, const std::string &path, arma::Row<T> &value) {
     const Path h5cpp_path(path);
-    const node::Group root = h5cpp_file.root();
-    const node::Dataset dset = root.get_dataset(h5cpp_path);
+    const node::Dataset dset = h5cpp_file.root().get_dataset(h5cpp_path);
     const dataspace::Simple dspace = dset.dataspace();
     value.set_size(hdf5_dimensions_to_arma_size_mat(dspace.current_dimensions()));
     dset.read(value);
@@ -191,8 +173,7 @@ void read(const file::File &h5cpp_file, const std::string &path, arma::Row<T> &v
 template <typename T>
 void read(const file::File &h5cpp_file, const std::string &path, arma::Mat<T> &value) {
     const Path h5cpp_path(path);
-    const node::Group root = h5cpp_file.root();
-    const node::Dataset dset = root.get_dataset(h5cpp_path);
+    const node::Dataset dset = h5cpp_file.root().get_dataset(h5cpp_path);
     const dataspace::Simple dspace = dset.dataspace();
     value.set_size(hdf5_dimensions_to_arma_size_mat(dspace.current_dimensions()));
     dset.read(value);
@@ -201,8 +182,7 @@ void read(const file::File &h5cpp_file, const std::string &path, arma::Mat<T> &v
 template <typename T>
 void read(const file::File &h5cpp_file, const std::string &path, arma::Cube<T> &value) {
     const Path h5cpp_path(path);
-    const node::Group root = h5cpp_file.root();
-    const node::Dataset dset = root.get_dataset(h5cpp_path);
+    const node::Dataset dset = h5cpp_file.root().get_dataset(h5cpp_path);
     const dataspace::Simple dspace = dset.dataspace();
     value.set_size(hdf5_dimensions_to_arma_size_cube(dspace.current_dimensions()));
     dset.read(value);
@@ -210,15 +190,115 @@ void read(const file::File &h5cpp_file, const std::string &path, arma::Cube<T> &
 
 void read(const file::File &h5cpp_file, const std::string &path, std::string &value) {
     const Path h5cpp_path(path);
-    const node::Group root = h5cpp_file.root();
-    const node::Dataset dset = root.get_dataset(h5cpp_path);
-    const dataspace::Scalar dspace = dset.dataspace();
+    const node::Dataset dset = h5cpp_file.root().get_dataset(h5cpp_path);
     dset.read(value);
+}
+
+template <typename T>
+void write(const file::File &h5cpp_file, const std::string &path, const T &value) {
+    const Path h5cpp_path(path);
+    property::LinkCreationList lcpl;
+    lcpl.enable_intermediate_group_creation();
+    const dataspace::Simple dspace = dataspace::create(value);
+    const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<T>(), dspace, lcpl);
+    dset.write(value);
+}
+
+void write(const file::File &h5cpp_file, const std::string &path, const std::string &value) {
+    const Path h5cpp_path(path);
+    property::LinkCreationList lcpl;
+    lcpl.enable_intermediate_group_creation();
+    const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<std::string>(), dataspace::create(value), lcpl);
+    dset.write(value);
+}
+
+// class implementations
+
+template <>
+void Interface::read(const std::string &path, arma::Col<double> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Row<double> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Mat<double> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Cube<double> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Col<arma::uword> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Row<arma::uword> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Mat<arma::uword> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Cube<arma::uword> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Col<arma::sword> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Row<arma::sword> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Mat<arma::sword> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <>
+void Interface::read(const std::string &path, arma::Cube<arma::sword> &value) const {
+    ::read(m_file, path, value);
+}
+
+template <typename T>
+void Interface::write(const std::string &path, const T &value) const {
+    const Path h5cpp_path(path);
+    property::LinkCreationList lcpl;
+    lcpl.enable_intermediate_group_creation();
+    const dataspace::Simple dspace = dataspace::create(value);
+    const node::Dataset dset(m_file.root(), h5cpp_path, datatype::create<T>(), dspace, lcpl);
+    dset.write(value);
+}
+
+template <>
+void Interface::write(const std::string &path, const std::string &value) const {
+    const Path h5cpp_path(path);
+    property::LinkCreationList lcpl;
+    lcpl.enable_intermediate_group_creation();
+    const node::Dataset dset(m_file.root(), h5cpp_path, datatype::create<std::string>(), dataspace::create(value), lcpl);
+    dset.write(value);
 }
 
 int main() {
     const std::string filename("arma.h5");
     const file::File file = get_or_create_file(filename);
+
+    const Interface iface(file);
+
     const node::Group root = file.root();
 
     // Demonstrate the "pure" Armadillo-based approach of saving to an HDF5
@@ -268,27 +348,27 @@ int main() {
     rv2.print("rv2");
     dset2.write(rv2);
 
-    write(file, "/vecs/rv2", rv2);
+    iface.write("/vecs/rv2", rv2);
 
     arma::Col<double> rv3;
-    read(file, "/vecs/rv2", rv3);
+    iface.read("/vecs/rv2", rv3);
     rv3.print("rv3 (that is rv2)");
 
-    write(file, "/vecs/rv4", arma::Col<double>(3, arma::fill::randn));
-    write(file, "/cubes/rc3", arma::cube(2, 3, 4, arma::fill::randn));
+    iface.write("/vecs/rv4", arma::Col<double>(3, arma::fill::randn));
+    iface.write("/cubes/rc3", arma::cube(2, 3, 4, arma::fill::randn));
 
     arma::cube rc3;
-    read(file, "/cubes/rc3", rc3);
+    iface.read("/cubes/rc3", rc3);
     rc3.print("rc3 (read)");
 
     arma::imat rm2 = arma::randi<arma::imat>(6, 7, arma::distr_param(-10, +20));
-    write(file, "/mats/rm2", rm2);
-    write(file, "/nested/mats/rm2", rm2);
+    iface.write("/mats/rm2", rm2);
+    iface.write("/nested/mats/rm2", rm2);
 
     const std::string mystring("I am just a string");
-    write(file, "/s1", mystring);
+    iface.write("/strings/s1", mystring);
     std::string mynewstring;
-    read(file, "/s1", mynewstring);
+    iface.read("/strings/s1", mynewstring);
     std::cout << mynewstring << std::endl;
 
     return 0;
