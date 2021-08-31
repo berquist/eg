@@ -9,3 +9,6 @@ target_link_libraries(attribute_creation.x h5cpp)
 
 add_executable(arma.x arma.cpp)
 target_link_libraries(arma.x h5cpp ${ARMADILLO_LIBRARIES})
+
+add_executable(h5cpp_string.x h5cpp_string.cpp)
+target_link_libraries(h5cpp_string.x h5cpp)

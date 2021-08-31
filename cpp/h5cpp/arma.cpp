@@ -24,6 +24,7 @@
 //
 
 #include "h5cpp_arma.hpp"
+#include "arma.hpp"
 #include <boost/filesystem.hpp>
 
 using namespace hdf5;
@@ -132,11 +133,18 @@ file::File get_or_create_file(const std::string &filename) {
 }
 
 template <typename T>
-void write(const T &value, const file::File &h5cpp_file, const std::string &path) {
+void write(const file::File &h5cpp_file, const std::string &path, const T &value) {
     const Path h5cpp_path(path);
-    const node::Group root = h5cpp_file.root();
     const dataspace::Simple dspace = dataspace::create(value);
-    const node::Dataset dset(root, h5cpp_path, datatype::create<T>(), dspace);
+    const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<T>(), dspace);
+    dset.write(value);
+}
+
+void write(const file::File &h5cpp_file, const std::string &path, const std::string &value) {
+    const Path h5cpp_path(path);
+    // const dataspace::Scalar dspace = dataspace::create(value);
+    // const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<std::string>(), dspace);
+    const node::Dataset dset(h5cpp_file.root(), h5cpp_path, datatype::create<std::string>());
     dset.write(value);
 }
 
@@ -158,7 +166,8 @@ arma::SizeCube hdf5_dimensions_to_arma_size_cube(const Dimensions &dims) {
     }
 }
 
-void read(const file::File &h5cpp_file, const std::string &path, arma::Mat<double> &value) {
+template <typename T>
+void read(const file::File &h5cpp_file, const std::string &path, arma::Col<T> &value) {
     const Path h5cpp_path(path);
     const node::Group root = h5cpp_file.root();
     const node::Dataset dset = root.get_dataset(h5cpp_path);
@@ -167,12 +176,41 @@ void read(const file::File &h5cpp_file, const std::string &path, arma::Mat<doubl
     dset.read(value);
 }
 
-void read(const file::File &h5cpp_file, const std::string &path, arma::Cube<double> &value) {
+template <typename T>
+void read(const file::File &h5cpp_file, const std::string &path, arma::Row<T> &value) {
+    const Path h5cpp_path(path);
+    const node::Group root = h5cpp_file.root();
+    const node::Dataset dset = root.get_dataset(h5cpp_path);
+    const dataspace::Simple dspace = dset.dataspace();
+    value.set_size(hdf5_dimensions_to_arma_size_mat(dspace.current_dimensions()));
+    dset.read(value);
+}
+
+template <typename T>
+void read(const file::File &h5cpp_file, const std::string &path, arma::Mat<T> &value) {
+    const Path h5cpp_path(path);
+    const node::Group root = h5cpp_file.root();
+    const node::Dataset dset = root.get_dataset(h5cpp_path);
+    const dataspace::Simple dspace = dset.dataspace();
+    value.set_size(hdf5_dimensions_to_arma_size_mat(dspace.current_dimensions()));
+    dset.read(value);
+}
+
+template <typename T>
+void read(const file::File &h5cpp_file, const std::string &path, arma::Cube<T> &value) {
     const Path h5cpp_path(path);
     const node::Group root = h5cpp_file.root();
     const node::Dataset dset = root.get_dataset(h5cpp_path);
     const dataspace::Simple dspace = dset.dataspace();
     value.set_size(hdf5_dimensions_to_arma_size_cube(dspace.current_dimensions()));
+    dset.read(value);
+}
+
+void read(const file::File &h5cpp_file, const std::string &path, std::string &value) {
+    const Path h5cpp_path(path);
+    const node::Group root = h5cpp_file.root();
+    const node::Dataset dset = root.get_dataset(h5cpp_path);
+    const dataspace::Scalar dspace = dset.dataspace();
     dset.read(value);
 }
 
@@ -226,21 +264,27 @@ int main() {
     rv2.print("rv2");
     dset2.write(rv2);
 
-    write(rv2, file, "/vecs/rv2");
+    write(file, "/vecs/rv2", rv2);
 
     arma::Col<double> rv3;
     read(file, "/vecs/rv2", rv3);
     rv3.print("rv3 (that is rv2)");
 
-    write(arma::Col<double>(3, arma::fill::randn), file, "/vecs/rv4");
-    write(arma::cube(2, 3, 4, arma::fill::randn), file, "/cubes/rc3");
+    write(file, "/vecs/rv4", arma::Col<double>(3, arma::fill::randn));
+    write(file, "/cubes/rc3", arma::cube(2, 3, 4, arma::fill::randn));
 
     arma::cube rc3;
     read(file, "/cubes/rc3", rc3);
     rc3.print("rc3 (read)");
 
     arma::imat rm2 = arma::randi<arma::imat>(6, 7, arma::distr_param(-10, +20));
-    write(rm2, file, "/mats/rm2");
+    write(file, "/mats/rm2", rm2);
+
+    const std::string mystring("I am just a string");
+    write(file, "/s1", mystring);
+    std::string mynewstring;
+    read(file, "/s1", mynewstring);
+    std::cout << mynewstring << std::endl;
 
     return 0;
 }
