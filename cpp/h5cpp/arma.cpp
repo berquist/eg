@@ -135,10 +135,8 @@ template <typename T>
 void write(const T &value, const file::File &h5cpp_file, const std::string &path) {
     const Path h5cpp_path(path);
     const node::Group root = h5cpp_file.root();
-    // FIXME
-    const auto dtype = datatype::create<T>();
     const dataspace::Simple dspace = dataspace::create(value);
-    const node::Dataset dset(root, h5cpp_path, dtype, dspace);
+    const node::Dataset dset(root, h5cpp_path, datatype::create<T>(), dspace);
     dset.write(value);
 }
 
@@ -163,7 +161,6 @@ arma::SizeCube hdf5_dimensions_to_arma_size_cube(const Dimensions &dims) {
 void read(const file::File &h5cpp_file, const std::string &path, arma::Mat<double> &value) {
     const Path h5cpp_path(path);
     const node::Group root = h5cpp_file.root();
-    const datatype::Float dtype = datatype::create<arma::Mat<double> >();
     const node::Dataset dset = root.get_dataset(h5cpp_path);
     const dataspace::Simple dspace = dset.dataspace();
     value.set_size(hdf5_dimensions_to_arma_size_mat(dspace.current_dimensions()));
@@ -173,7 +170,6 @@ void read(const file::File &h5cpp_file, const std::string &path, arma::Mat<doubl
 void read(const file::File &h5cpp_file, const std::string &path, arma::Cube<double> &value) {
     const Path h5cpp_path(path);
     const node::Group root = h5cpp_file.root();
-    const datatype::Float dtype = datatype::create<arma::Cube<double> >();
     const node::Dataset dset = root.get_dataset(h5cpp_path);
     const dataspace::Simple dspace = dset.dataspace();
     value.set_size(hdf5_dimensions_to_arma_size_cube(dspace.current_dimensions()));
