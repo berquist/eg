@@ -211,6 +211,14 @@ int main() {
     std::cout << mynewstring << std::endl;
 
     iface.write("/nums/n1", 1.23);
+    iface.write("/nums/n2", 4);
+    iface.write("/nums/n3", size_t(4));
+    double n1;
+    int n2;
+    size_t n3;
+    iface.read("/nums/n1", n1);
+    iface.read("/nums/n2", n2);
+    iface.read("/nums/n3", n3);
 
     return 0;
 }

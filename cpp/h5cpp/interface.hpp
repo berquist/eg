@@ -16,6 +16,8 @@ public:
         dset.read(value);
     }
 
+    // the decision made to force explicit instantiation for POD rather than
+    // Armadillo types due to the sheer number of combinations
     template <typename T>
     void write(const std::string &path, const T &value) const {
         const hdf5::Path h5cpp_path(path);

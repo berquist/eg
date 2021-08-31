@@ -60,7 +60,9 @@ void read(const file::File &h5cpp_file, const std::string &path, arma::Cube<T> &
     dset.read(value);
 }
 
-void read(const file::File &h5cpp_file, const std::string &path, std::string &value) {
+// void read(const file::File &h5cpp_file, const std::string &path, std::string &value) {
+template <typename T>
+void read(const file::File &h5cpp_file, const std::string &path, T &value) {
     const Path h5cpp_path(path);
     const node::Dataset dset = h5cpp_file.root().get_dataset(h5cpp_path);
     dset.read(value);
@@ -75,7 +77,9 @@ void write_scalar(const file::File &h5cpp_file, const std::string &path, const T
     dset.write(value);
 }
 
-// class implementations
+// class implementations/specializations
+// add more as you see fit, keeping in mind that:
+//  - TODO
 
 template <>
 void Interface::read(const std::string &path, arma::Col<double> &value) const {
@@ -139,6 +143,26 @@ void Interface::read(const std::string &path, arma::Cube<arma::sword> &value) co
 
 template <>
 void Interface::write(const std::string &path, const std::string &value) const {
+    ::write_scalar(m_file, path, value);
+}
+
+template <>
+void Interface::write(const std::string &path, const unsigned &value) const {
+    ::write_scalar(m_file, path, value);
+}
+
+template <>
+void Interface::write(const std::string &path, const size_t &value) const {
+    ::write_scalar(m_file, path, value);
+}
+
+template <>
+void Interface::write(const std::string &path, const int &value) const {
+    ::write_scalar(m_file, path, value);
+}
+
+template <>
+void Interface::write(const std::string &path, const float &value) const {
     ::write_scalar(m_file, path, value);
 }
 
