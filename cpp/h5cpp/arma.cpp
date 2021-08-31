@@ -38,6 +38,10 @@ std::ostream& operator<<(std::ostream &os, const std::vector<T> &v) {
     return os;
 }
 
+std::ostream& operator<<(std::ostream &os, const node::Dataset &ds) {
+    return os;
+}
+
 // void createFile() {
 //     file::File File = file::create("SomeFile.hdf5", file::AccessFlags::TRUNCATE);
 //     node::Group RootGroup = File.root();
@@ -219,6 +223,25 @@ int main() {
     iface.read("/nums/n1", n1);
     iface.read("/nums/n2", n2);
     iface.read("/nums/n3", n3);
+
+    node::Group group = root;
+    std::vector<node::Dataset> datasets;
+
+    std::copy_if(node::RecursiveNodeIterator::begin(group),
+                 node::RecursiveNodeIterator::end(group),
+                 std::back_inserter(datasets),
+                 [](const node::Node &node) {
+                     return node.type()==node::Type::DATASET;
+                 });
+
+    // std::cout << "Datasets:" << std::endl;
+    // std::cout << datasets << std::endl;
+
+
+    std::for_each(hdf5::node::RecursiveLinkIterator::begin(group),
+                  hdf5::node::RecursiveLinkIterator::end(group),
+                  [](const hdf5::node::Link &link)
+                      { std::cout << link.path() << std::endl; });
 
     return 0;
 }
