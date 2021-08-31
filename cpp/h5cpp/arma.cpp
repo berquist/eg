@@ -123,8 +123,6 @@ file::File get_or_create_file(const std::string &filename) {
         h5file = file::create(fp);
     } else if (file::is_hdf5_file(fp)) {
         h5file = file::open(fp, file::AccessFlags::READWRITE);
-        // for testing
-        // h5file = file::create(fp, file::AccessFlags::TRUNCATE);
     } else {
         std::ostringstream os;
         os << "non-HDF5 file already exists: " << filename;
@@ -137,7 +135,8 @@ template <typename T>
 void write(const T &value, const file::File &h5cpp_file, const std::string &path) {
     const Path h5cpp_path(path);
     const node::Group root = h5cpp_file.root();
-    const datatype::Float dtype = datatype::create<T>();
+    // FIXME
+    const auto dtype = datatype::create<T>();
     const dataspace::Simple dspace = dataspace::create(value);
     const node::Dataset dset(root, h5cpp_path, dtype, dspace);
     dset.write(value);
@@ -165,9 +164,6 @@ void read(const file::File &h5cpp_file, const std::string &path, arma::Mat<doubl
     const Path h5cpp_path(path);
     const node::Group root = h5cpp_file.root();
     const datatype::Float dtype = datatype::create<arma::Mat<double> >();
-    // TODO blow up
-    // if (!root.has_dataset(h5cpp_path)) {
-    // }
     const node::Dataset dset = root.get_dataset(h5cpp_path);
     const dataspace::Simple dspace = dset.dataspace();
     value.set_size(hdf5_dimensions_to_arma_size_mat(dspace.current_dimensions()));
@@ -178,9 +174,6 @@ void read(const file::File &h5cpp_file, const std::string &path, arma::Cube<doub
     const Path h5cpp_path(path);
     const node::Group root = h5cpp_file.root();
     const datatype::Float dtype = datatype::create<arma::Cube<double> >();
-    // TODO blow up
-    // if (!root.has_dataset(h5cpp_path)) {
-    // }
     const node::Dataset dset = root.get_dataset(h5cpp_path);
     const dataspace::Simple dspace = dset.dataspace();
     value.set_size(hdf5_dimensions_to_arma_size_cube(dspace.current_dimensions()));
@@ -249,6 +242,9 @@ int main() {
     arma::cube rc3;
     read(file, "/cubes/rc3", rc3);
     rc3.print("rc3 (read)");
+
+    arma::imat rm2 = arma::randi<arma::imat>(6, 7, arma::distr_param(-10, +20));
+    write(rm2, file, "/mats/rm2");
 
     return 0;
 }

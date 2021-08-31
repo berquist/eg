@@ -4,7 +4,9 @@
 #include <armadillo>
 #include <h5cpp/hdf5.hpp>
 
-// implementation ordering: Col, Row, Mat, Cube
+// implementation ordering:
+//  - Col, Row, Mat, Cube
+//  - double, uword, sword
 
 namespace hdf5 {
     namespace dataspace {
@@ -62,6 +64,7 @@ namespace hdf5 {
         };
     }
     namespace datatype {
+
         template<> class TypeTrait<arma::Col<double> > {
         public:
             using Type = arma::Col<double>;
@@ -92,6 +95,72 @@ namespace hdf5 {
             using TypeClass = Float;
             static TypeClass create(const Type & = Type()) {
                 return TypeTrait<double>::create();
+            }
+        };
+
+        template<> class TypeTrait<arma::Col<arma::uword> > {
+        public:
+            using Type = arma::Col<arma::uword>;
+            using TypeClass = Integer;
+            static TypeClass create(const Type & = Type()) {
+                return TypeTrait<arma::uword>::create();
+            }
+        };
+        template<> class TypeTrait<arma::Row<arma::uword> > {
+        public:
+            using Type = arma::Row<arma::uword>;
+            using TypeClass = Integer;
+            static TypeClass create(const Type & = Type()) {
+                return TypeTrait<arma::uword>::create();
+            }
+        };
+        template<> class TypeTrait<arma::Mat<arma::uword> > {
+        public:
+            using Type = arma::Mat<arma::uword>;
+            using TypeClass = Integer;
+            static TypeClass create(const Type & = Type()) {
+                return TypeTrait<arma::uword>::create();
+            }
+        };
+        template<> class TypeTrait<arma::Cube<arma::uword> > {
+        public:
+            using Type = arma::Cube<arma::uword>;
+            using TypeClass = Integer;
+            static TypeClass create(const Type & = Type()) {
+                return TypeTrait<arma::uword>::create();
+            }
+        };
+
+        template<> class TypeTrait<arma::Col<arma::sword> > {
+        public:
+            using Type = arma::Col<arma::sword>;
+            using TypeClass = Integer;
+            static TypeClass create(const Type & = Type()) {
+                return TypeTrait<arma::sword>::create();
+            }
+        };
+        template<> class TypeTrait<arma::Row<arma::sword> > {
+        public:
+            using Type = arma::Row<arma::sword>;
+            using TypeClass = Integer;
+            static TypeClass create(const Type & = Type()) {
+                return TypeTrait<arma::sword>::create();
+            }
+        };
+        template<> class TypeTrait<arma::Mat<arma::sword> > {
+        public:
+            using Type = arma::Mat<arma::sword>;
+            using TypeClass = Integer;
+            static TypeClass create(const Type & = Type()) {
+                return TypeTrait<arma::sword>::create();
+            }
+        };
+        template<> class TypeTrait<arma::Cube<arma::sword> > {
+        public:
+            using Type = arma::Cube<arma::sword>;
+            using TypeClass = Integer;
+            static TypeClass create(const Type & = Type()) {
+                return TypeTrait<arma::sword>::create();
             }
         };
     }
