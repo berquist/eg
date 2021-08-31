@@ -23,12 +23,19 @@
 // Created on: Oct 07, 2017
 //
 
-#include <armadillo>
-#include <h5cpp/hdf5.hpp>
+#include "h5cpp_arma.hpp"
 #include <boost/filesystem.hpp>
 
 using namespace hdf5;
 namespace fs = boost::filesystem;
+
+template<typename T>
+std::ostream& operator<<(std::ostream &os, const std::vector<T> &v) {
+    for (size_t i = 0; i < v.size(); i++) {
+        os << "v[" << i << "] = " << v[i] << std::endl;
+    }
+    return os;
+}
 
 void createFile() {
     file::File File = file::create("SomeFile.hdf5", file::AccessFlags::TRUNCATE);
@@ -126,53 +133,57 @@ file::File get_or_create_file(const std::string &filename) {
     return h5file;
 }
 
-namespace hdf5 {
-    namespace dataspace {
-        template<> class TypeTrait<arma::Col<double> > {
-        public:
-            using DataspaceType = Simple;
-            static DataspaceType create(const arma::Col<double> &v) {
-                return Simple({v.n_elem});
-            }
-            static void *ptr(arma::Col<double> &v) {
-                return reinterpret_cast<void*>(v.memptr());
-            }
-            static const void *cptr(const arma::Col<double> &v) {
-                return reinterpret_cast<const void*>(v.memptr());
-            }
-        };
-    }
-    namespace datatype {
-        template<> class TypeTrait<arma::Col<double> > {
-        public:
-            using Type = arma::Col<double>;
-            using TypeClass = Float;
-            static TypeClass create(const Type & = Type()) {
-                return TypeTrait<double>::create();
-            }
-        };
-    }
-}
-
-void write(const arma::Col<double> &value, const file::File &h5cpp_file, const std::string &path) {
+template <typename T>
+void write(const T &value, const file::File &h5cpp_file, const std::string &path) {
     const Path h5cpp_path(path);
     const node::Group root = h5cpp_file.root();
-    const datatype::Float dtype = datatype::create<arma::Col<double> >();
+    const datatype::Float dtype = datatype::create<T>();
     const dataspace::Simple dspace = dataspace::create(value);
     const node::Dataset dset(root, h5cpp_path, dtype, dspace);
     dset.write(value);
 }
 
-void read(const file::File &h5cpp_file, const std::string &path, arma::Col<double> &value) {
+arma::SizeMat hdf5_dimensions_to_arma_size_mat(const Dimensions &dims) {
+    switch (dims.size()) {
+    case 2:
+        return arma::size(dims[0], dims[1]);
+    default:
+        throw std::runtime_error("unknown number of dimensions");
+    }
+}
+
+arma::SizeCube hdf5_dimensions_to_arma_size_cube(const Dimensions &dims) {
+    switch (dims.size()) {
+    case 3:
+        return arma::size(dims[0], dims[1], dims[2]);
+    default:
+        throw std::runtime_error("unknown number of dimensions");
+    }
+}
+
+void read(const file::File &h5cpp_file, const std::string &path, arma::Mat<double> &value) {
     const Path h5cpp_path(path);
     const node::Group root = h5cpp_file.root();
-    const datatype::Float dtype = datatype::create<arma::Col<double> >();
+    const datatype::Float dtype = datatype::create<arma::Mat<double> >();
     // TODO blow up
     // if (!root.has_dataset(h5cpp_path)) {
     // }
     const node::Dataset dset = root.get_dataset(h5cpp_path);
-    // FIXME set shape of value
-    // value.res
+    const dataspace::Simple dspace = dset.dataspace();
+    value.set_size(hdf5_dimensions_to_arma_size_mat(dspace.current_dimensions()));
+    dset.read(value);
+}
+
+void read(const file::File &h5cpp_file, const std::string &path, arma::Cube<double> &value) {
+    const Path h5cpp_path(path);
+    const node::Group root = h5cpp_file.root();
+    const datatype::Float dtype = datatype::create<arma::Cube<double> >();
+    // TODO blow up
+    // if (!root.has_dataset(h5cpp_path)) {
+    // }
+    const node::Dataset dset = root.get_dataset(h5cpp_path);
+    const dataspace::Simple dspace = dset.dataspace();
+    value.set_size(hdf5_dimensions_to_arma_size_cube(dspace.current_dimensions()));
     dset.read(value);
 }
 
@@ -182,7 +193,10 @@ int main() {
     const node::Group root = file.root();
 
     // Demonstrate the "pure" Armadillo-based approach of saving to an HDF5
-    // file.
+    // file.  Note that when looking at the underlying HDF5 file, the contents
+    // will transposed from what's expected, since the storage mechanism
+    // preserves Armadillo's use of column-major memory layout (Fortran)
+    // rather than row-major (C).
 
     const size_t dim_big = 20;
     const arma::Col<double> rv1(dim_big, arma::fill::randn);
@@ -228,6 +242,13 @@ int main() {
     arma::Col<double> rv3;
     read(file, "/vecs/rv2", rv3);
     rv3.print("rv3 (that is rv2)");
+
+    write(arma::Col<double>(3, arma::fill::randn), file, "/vecs/rv4");
+    write(arma::cube(2, 3, 4, arma::fill::randn), file, "/cubes/rc3");
+
+    arma::cube rc3;
+    read(file, "/cubes/rc3", rc3);
+    rc3.print("rc3 (read)");
 
     return 0;
 }
