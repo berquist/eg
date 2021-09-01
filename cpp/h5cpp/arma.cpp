@@ -136,6 +136,18 @@ file::File get_or_create_file(const std::string &filename) {
     return h5file;
 }
 
+void containment(const node::Group &grp, const std::string &p) {
+    Path h5p(p);
+    std::cout << p << std::endl;
+    // Must be a single link name
+    // std::cout << "exists:" << std::endl;
+    // std::cout << grp.exists(p) << std::endl;
+    std::cout << "has_group:" << std::endl;
+    std::cout << grp.has_group(h5p) << std::endl;
+    std::cout << "has_dataset:" << std::endl;
+    std::cout << grp.has_dataset(h5p) << std::endl;
+}
+
 int main() {
     const std::string filename("arma.h5");
     const file::File file = get_or_create_file(filename);
@@ -224,24 +236,30 @@ int main() {
     iface.read("/nums/n2", n2);
     iface.read("/nums/n3", n3);
 
-    node::Group group = root;
-    std::vector<node::Dataset> datasets;
+    // node::Group group = root;
+    // std::vector<node::Dataset> datasets;
 
-    std::copy_if(node::RecursiveNodeIterator::begin(group),
-                 node::RecursiveNodeIterator::end(group),
-                 std::back_inserter(datasets),
-                 [](const node::Node &node) {
-                     return node.type()==node::Type::DATASET;
-                 });
+    // std::copy_if(node::RecursiveNodeIterator::begin(group),
+    //              node::RecursiveNodeIterator::end(group),
+    //              std::back_inserter(datasets),
+    //              [](const node::Node &node) {
+    //                  return node.type()==node::Type::DATASET;
+    //              });
 
     // std::cout << "Datasets:" << std::endl;
     // std::cout << datasets << std::endl;
 
 
-    std::for_each(hdf5::node::RecursiveLinkIterator::begin(group),
-                  hdf5::node::RecursiveLinkIterator::end(group),
-                  [](const hdf5::node::Link &link)
-                      { std::cout << link.path() << std::endl; });
+    // std::for_each(hdf5::node::RecursiveLinkIterator::begin(group),
+    //               hdf5::node::RecursiveLinkIterator::end(group),
+    //               [](const hdf5::node::Link &link)
+    //                   { std::cout << link.path() << std::endl; });
+
+    std::string p = "/nested/mats/rm2";
+    containment(root, p);
+
+    p = "/nested/mats";
+    containment(root, p);
 
     return 0;
 }
