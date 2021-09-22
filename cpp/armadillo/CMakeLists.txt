@@ -1,3 +1,6 @@
+project(EG_ARMADILLO)
+cmake_minimum_required(VERSION 3.0)
+
 find_package(Armadillo)
 
 set(SRC_ARMA
@@ -16,6 +19,7 @@ set(SRC_ARMA
     repack
     schur_matrix_vector
     timing
+    transpose
     )
 
 if(${ARMADILLO_FOUND})
