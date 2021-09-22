@@ -111,30 +111,47 @@ struct details::inspector<arma::Mat<T>> {
 };
 
 template <typename T>
-struct details::data_converter<arma::Mat<T>>
-    : public details::container_converter<arma::Mat<T>> {
+struct details::data_converter<arma::Mat<T>> {
+// struct details::data_converter<arma::Mat<T>>
+//     : public details::container_converter<arma::Mat<T>> {
 
     using container_type = arma::Mat<T>;
     using value_type = typename details::inspector<T>::base_type;
 
+    // inline data_converter(const DataSpace &space)
+    //     : details::container_converter<container_type>(space), _space(space) {
     inline data_converter(const DataSpace &space)
-        : details::container_converter<container_type>(space), _space(space) {
+        : _space(space) {
 
         const std::vector<size_t> dims = _space.getDimensions();
         assert(dims.size() == 2);
+        // _container_st.set_size(dims[1], dims[0]);
     }
 
     inline value_type * transform_read(container_type &container) {
         const std::vector<size_t> dims = _space.getDimensions();
-        container.set_size(dims[0], dims[1]);
+        container.set_size(dims[1], dims[0]);
         return container.memptr();
     }
 
-    inline const value_type * transform_write(const container_type &container) const noexcept {
-        return container.memptr();
+    inline const value_type * transform_write(const container_type &container) noexcept {
+        // All this is to write out in row-major order and get the data to
+        // live long enough.
+        // const container_type tmp = container_type(container.st());
+        // memcpy(static_cast<const void*>(_container_st.memptr()),
+        //        tmp.memptr(),
+        //        sizeof(value_type) * tmp.n_elem);
+        // All the above is unnecessary if the method isn't const...
+        _container_st = container_type(container.st());
+        return _container_st.memptr();
+    }
+
+    inline void process_result(container_type &container) {
+        container = container_type(container.st());
     }
 
     const DataSpace& _space;
+    container_type _container_st;
 };
 
 //// Cube<T>

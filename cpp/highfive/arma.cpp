@@ -120,6 +120,7 @@ int main() {
     rc3.print("rc3 (read)");
 
     arma::imat rm2 = arma::randi<arma::imat>(6, 7, arma::distr_param(-10, +20));
+    rm2.print("rm2");
     iface.write("/mats/rm2", rm2);
     iface.write("/nested/mats/rm2", rm2);
 
@@ -207,6 +208,14 @@ int main() {
     }
     write(file, "/x/y/z/vec_of_mats", vec_of_mats);
     write(file, "/x/y/z/vec_of_cubes", vec_of_cubes);
+
+    arma::cx_mat cm(3, 4, arma::fill::randn);
+    cm.print("cm");
+    iface.write("cm", cm);
+    arma::cx_mat cm_read;
+    iface.read("cm", cm_read);
+    cm_read.print("cm_read");
+    assert((cm - cm_read).is_zero());
 
     return 0;
 }
