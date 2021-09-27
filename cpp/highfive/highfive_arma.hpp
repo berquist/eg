@@ -112,20 +112,15 @@ struct details::inspector<arma::Mat<T>> {
 
 template <typename T>
 struct details::data_converter<arma::Mat<T>> {
-// struct details::data_converter<arma::Mat<T>>
-//     : public details::container_converter<arma::Mat<T>> {
 
     using container_type = arma::Mat<T>;
     using value_type = typename details::inspector<T>::base_type;
 
-    // inline data_converter(const DataSpace &space)
-    //     : details::container_converter<container_type>(space), _space(space) {
     inline data_converter(const DataSpace &space)
         : _space(space) {
 
         const std::vector<size_t> dims = _space.getDimensions();
         assert(dims.size() == 2);
-        // _container_st.set_size(dims[1], dims[0]);
     }
 
     inline value_type * transform_read(container_type &container) {
@@ -135,13 +130,8 @@ struct details::data_converter<arma::Mat<T>> {
     }
 
     inline const value_type * transform_write(const container_type &container) noexcept {
-        // All this is to write out in row-major order and get the data to
+        // This is to write out in row-major order and get the data to
         // live long enough.
-        // const container_type tmp = container_type(container.st());
-        // memcpy(static_cast<const void*>(_container_st.memptr()),
-        //        tmp.memptr(),
-        //        sizeof(value_type) * tmp.n_elem);
-        // All the above is unnecessary if the method isn't const...
         _container_st = container_type(container.st());
         return _container_st.memptr();
     }
@@ -166,20 +156,20 @@ struct details::inspector<arma::Cube<T>> {
     static const size_t recursive_ndim = ndim + inspector<value_type>::recursive_ndim;
 
     static std::array<size_t, recursive_ndim> getDimensions(const type &val) {
-        std::array<size_t, recursive_ndim> sizes{val.n_rows, val.n_cols, val.n_slices};
+        // Each slice is stored contiguously in memory, so
+        std::array<size_t, recursive_ndim> sizes{val.n_slices, val.n_rows, val.n_cols};
         return sizes;
     }
 };
 
 template <typename T>
-struct details::data_converter<arma::Cube<T>>
-    : public details::container_converter<arma::Cube<T>> {
+struct details::data_converter<arma::Cube<T>> {
 
     using container_type = arma::Cube<T>;
     using value_type = typename details::inspector<T>::base_type;
 
     inline data_converter(const DataSpace &space)
-        : details::container_converter<container_type>(space), _space(space) {
+        : _space(space) {
 
         const std::vector<size_t> dims = _space.getDimensions();
         assert(dims.size() == 3);
@@ -187,13 +177,41 @@ struct details::data_converter<arma::Cube<T>>
 
     inline value_type * transform_read(container_type &container) {
         const std::vector<size_t> dims = _space.getDimensions();
-        container.set_size(dims[0], dims[1], dims[2]);
+        // container.set_size(dims[1], dims[2], dims[0]);
+
+        // The row/col dims need to be flipped here, but the actual data will
+        // be flipped in process_result.  We can't do it here because the read
+        // happens in row-major order.
+        container.set_size(dims[2], dims[1], dims[0]);
         return container.memptr();
     }
 
-    inline const value_type * transform_write(const container_type &container) const noexcept {
-        return container.memptr();
+    inline const value_type * transform_write(const container_type &container) noexcept {
+        // arma::Col<T> v = arma::vectorise(container);
+        _buffer.resize(container.n_elem);
+        size_t offset;
+        for (size_t k = 0; k < container.n_slices; k++) {
+            for (size_t j = 0; j < container.n_cols; j++) {
+                for (size_t i = 0; i < container.n_rows; i++) {
+                    // offset = i + (container.n_rows * j) + (container.n_rows * container.n_cols * k);
+                    // Transpose row and column indices
+                    offset = j + (container.n_cols * i) + (container.n_rows * container.n_cols * k);
+                    // std::cout << "(" << i << "," << j << "," << k << ") [" << offset << "] = " << container(i, j, k) << " [" << v[offset] << "]" << std::endl;
+                    _buffer[offset] = container(i, j, k);
+                }
+            }
+        }
+        return _buffer.data();
+    }
+
+    inline void process_result(container_type &container) noexcept {
+        arma::Cube<value_type> ret(container.n_cols, container.n_rows, container.n_slices);
+        for (size_t k = 0; k < container.n_slices; k++) {
+            ret.slice(k) = container.slice(k).st();
+        }
+        container = ret;
     }
 
     const DataSpace& _space;
+    std::vector<value_type> _buffer;
 };

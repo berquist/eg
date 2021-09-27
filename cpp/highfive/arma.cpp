@@ -113,11 +113,13 @@ int main() {
     rv3.print("rv3 (that is rv2)");
 
     iface.write("/vecs/rv4", arma::Col<double>(3, arma::fill::randn));
-    iface.write("/cubes/rc3", arma::cube(2, 3, 4, arma::fill::randn));
+    arma::cube rc3(2, 3, 4, arma::fill::randn);
+    rc3.print("rc3");
+    iface.write("/cubes/rc3", rc3);
 
-    arma::cube rc3;
-    iface.read("/cubes/rc3", rc3);
-    rc3.print("rc3 (read)");
+    arma::cube rc3_read;
+    iface.read("/cubes/rc3", rc3_read);
+    rc3_read.print("rc3 (read)");
 
     arma::imat rm2 = arma::randi<arma::imat>(6, 7, arma::distr_param(-10, +20));
     rm2.print("rm2");
