@@ -1,15 +1,8 @@
+#include "common.hpp"
 #include "highfive_arma.hpp"
 #include "interface.hpp"
 
 using namespace HighFive;
-
-template<typename T>
-std::ostream& operator<<(std::ostream &os, const std::vector<T> &v) {
-    for (size_t i = 0; i < v.size(); i++) {
-        os << "v[" << i << "] = " << v[i] << std::endl;
-    }
-    return os;
-}
 
 std::ostream& operator<<(std::ostream &os, const ObjectType &ot) {
     switch (ot) {
@@ -40,6 +33,9 @@ std::ostream& operator<<(std::ostream &os, const ObjectType &ot) {
     return os;
 }
 
+/** Write a STL vector of Armadillo matrices with the STL vector index as the first index.
+ *
+ */
 template <typename T>
 void write(File &file, const std::string &name, const std::vector<arma::Mat<T>> &vec) {
     const size_t vs = vec.size();
@@ -50,25 +46,28 @@ void write(File &file, const std::string &name, const std::vector<arma::Mat<T>> 
     DataSet dset = file.createDataSet<T>(name, DataSpace(dims));
     for (size_t i = 0; i < vs; i++) {
         vec[i].print("m");
-        // arma.x: /home/eric/development/eg/cpp/highfive/highfive_arma.hpp:124: HighFive::details::data_converter<arma::Mat<eT> >::data_converter(const HighFive::DataSpace&) [with T = double]: Assertion `dims.size() == 2' failed.
-        // dset.select({i, 0, 0}, {1, dims[1], dims[2]}).write(vec[i]);
-        // terminate called after throwing an instance of 'HighFive::DataSpaceException'
-        //  what():  Impossible to write buffer of dimensions 1 into dataset of dimensions 3
-        // dset.select({i, 0, 0}, {1, dims[1], dims[2]}).write(arma::conv_to<std::vector<T>>::from(arma::vectorise(vec[i])));
-        dset.select({i, 0, 0}, {1, dims[1], dims[2]}).write_raw(vec[i].memptr());
+        // Because the matrix has 2 dimensions and the dataspace still
+        // technically has three, the matrix cannot be written directly using
+        // HighFive machinery.  We can't call write_raw, because we want that
+        // HighFive machinery to handle the memory layout conversions.
+
+        // dset.select({i, 0, 0}, {1, dims[1], dims[2]}).write_raw(vec[i].memptr());
+        dset.select({i, 0, 0}, {1, dims[1], dims[2]}).write(vec[i]);
     }
 }
 
+/** Write a STL vector of Armadillo cubes with the STL vector index as the first index.
+ *
+ */
 template <typename T>
 void write(File &file, const std::string &name, const std::vector<arma::Cube<T>> &vec) {
     const size_t vs = vec.size();
-    // TODO check at least length 1
-    // TODO check all items have same shape
     std::vector<size_t> dims = DataSpace::From(vec[0]).getDimensions();
     dims.insert(dims.begin(), vs);
     DataSet dset = file.createDataSet<T>(name, DataSpace(dims));
     for (size_t i = 0; i < vs; i++) {
         vec[i].print("c");
+        // Because the cube has 3 dimensions and the dataspace still technically has four
         dset.select({i, 0, 0, 0}, {1, dims[1], dims[2], dims[3]}).write_raw(vec[i].memptr());
     }
 }
