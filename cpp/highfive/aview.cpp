@@ -1,7 +1,9 @@
+#include <complex>
+
 #include "common.hpp"
 
 #include <armadillo>
-#include <libaview/tens.h>
+#include "highfive_arma.hpp"
 #include "highfive_aview.hpp"
 
 using namespace HighFive;
@@ -60,6 +62,17 @@ int main() {
     auto dset_t3 = file.createDataSet<double>("t3", DataSpace::From(av3));
     dset_t3.write(av3);
     // std::cout << v3 << std::endl;
+
+    const size_t dt2 = d1 * d2 * d3;
+    arma::cx_cube cz1(d1, d2, d3, arma::fill::randu);
+    libaview::array_view<std::complex<double>> vz1(cz1.memptr(), cz1.n_elem);
+    libaview::tens3z tz1(vz1, d1, d2, d3);
+
+    auto dset_z1_arma = file.createDataSet<std::complex<double>>("z1_arma", DataSpace::From(cz1));
+    auto dset_z1_aview = file.createDataSet<std::complex<double>>("z1_aview", DataSpace::From(tz1));
+    dset_z1_arma.write(cz1);
+    dset_z1_aview.write(tz1);
+    cz1.print("cz1");
 
     return 0;
 }
