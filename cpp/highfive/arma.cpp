@@ -197,19 +197,23 @@ int main() {
     //
     // DataSet dset_cube_to_resize = file.createDataSet("/cubes/cube_to_resize", rc3);
     // dset_cube_to_resize.resize(new_dims);
-    
+
+    // Example of writing an object to a DataSet that has the same number of
+    // dimensions but the number of elements is distributed differently
+    // between each dimension.
     DataSet dset_cube_different_shape = file.createDataSet<double>("/cubes/different_shape", DataSpace(new_dims));
     dset_cube_different_shape.write(rc3);
 
-    std::vector<arma::mat> vec_of_mats;
-    std::vector<arma::cube> vec_of_cubes;
-    for (size_t i = 0; i < 5; i++) {
-        vec_of_mats.push_back(arma::mat(2, 3, arma::fill::randn));
-        vec_of_cubes.push_back(arma::cube(2, 3, 4, arma::fill::randn));
-    }
-    write(file, "/x/y/z/vec_of_mats", vec_of_mats);
-    write(file, "/x/y/z/vec_of_cubes", vec_of_cubes);
+    // std::vector<arma::mat> vec_of_mats;
+    // std::vector<arma::cube> vec_of_cubes;
+    // for (size_t i = 0; i < 5; i++) {
+    //     vec_of_mats.push_back(arma::mat(2, 3, arma::fill::randn));
+    //     vec_of_cubes.push_back(arma::cube(2, 3, 4, arma::fill::randn));
+    // }
+    // write(file, "/x/y/z/vec_of_mats", vec_of_mats);
+    // write(file, "/x/y/z/vec_of_cubes", vec_of_cubes);
 
+    // Example of reading and writing an object with complex elements.
     arma::cx_mat cm(3, 4, arma::fill::randn);
     cm.print("cm");
     iface.write("cm", cm);
@@ -217,6 +221,90 @@ int main() {
     iface.read("cm", cm_read);
     cm_read.print("cm_read");
     assert((cm - cm_read).is_zero());
+
+    const arma::span sp_0(0);
+    const arma::span sp_12(1, 2);
+
+    // Reading and writing slices of DataSets
+
+    const std::string filename_windows("arma_windows.h5");
+    File file_windows(filename_windows, File::ReadWrite | File::Create | File::Truncate);
+
+    arma::cx_cube cc(2, 3, 5, arma::fill::randn);
+    arma::cx_cube cc2(cc);
+    cc.print("cc");
+    // This only sets the real part...?
+    // cc2.tube(sp_0, sp_12).ones();
+    arma::cx_cube tube(arma::cube(1, 2, 5, arma::fill::ones), arma::cube(1, 2, 5, arma::fill::ones));
+    cc2.tube(sp_0, sp_12) = tube;
+    cc2.print("cc2");
+    DataSet dset_cc = file_windows.createDataSet("cc", cc);
+    // rows: write 0 to 0 -> 0 offset, 1 element
+    // cols: write 1 to 2 -> 1 offset, 2 elements
+    // slices: tube, do all
+    // The ordering follows HDF, not Armadillo: slices, rows, columns
+    dset_cc.select({0, 0, 1}, {5, 1, 2}).write(tube);
+    arma::cx_cube cc2_read;
+    dset_cc.read(cc2_read);
+    assert((cc2_read - cc2).is_zero());
+    arma::cx_cube tube_read;
+    dset_cc.select({0, 0, 1}, {5, 1, 2}).read(tube_read);
+    tube_read.print("tube_read");
+
+    const arma::cube ones_5 = arma::cube(5, 5, 5, arma::fill::ones);
+    const arma::cube twos_5 = ones_5 * 2.0;
+    const arma::cube threes_5 = ones_5 * 3.0;
+    const arma::cube ones_1 = arma::cube(1, 1, 1, arma::fill::ones);
+
+    // What happens when we try to write something too big of the same type?
+    dset_cc.write(arma::cx_cube(threes_5, threes_5));
+    // -> writes matching space with no offset, drops extra elements!
+
+    // What happens when we try to write something too small of the same type?
+    dset_cc.write(arma::cx_cube(ones_1, ones_1));
+    // -> writes matching space with no offset, remaining elements become uninitialized!
+
+    // What happens when we try to write something of the right size of a
+    // different type?
+    arma::cube cd = arma::randi<arma::cube>(2, 3, 5, arma::distr_param(-10, +20));
+    arma::icube ci = arma::randi<arma::icube>(2, 3, 5, arma::distr_param(-10, +20));
+    //     HighFive WARNING "/cc": data and hdf5 dataset have different types: Integer64 -> Compound128
+    // HDF5-DIAG: Error detected in HDF5 (1.12.0) thread 0:
+    //   #000: H5Dio.c line 314 in H5Dwrite(): can't write data
+    //     major: Dataset
+    //     minor: Write failed
+    //   #001: H5VLcallback.c line 2186 in H5VL_dataset_write(): dataset write failed
+    //     major: Virtual Object Layer
+    //     minor: Write failed
+    //   #002: H5VLcallback.c line 2152 in H5VL__dataset_write(): dataset write failed
+    //     major: Virtual Object Layer
+    //     minor: Write failed
+    //   #003: H5VLnative_dataset.c line 207 in H5VL__native_dataset_write(): can't write data
+    //     major: Dataset
+    //     minor: Write failed
+    //   #004: H5Dio.c line 648 in H5D__write(): unable to set up type info
+    //     major: Dataset
+    //     minor: Unable to initialize object
+    //   #005: H5Dio.c line 946 in H5D__typeinfo_init(): unable to convert between src and dest datatype
+    //     major: Dataset
+    //     minor: Feature is unsupported
+    //   #006: H5T.c line 4815 in H5T_path_find(): can't find datatype conversion path
+    //     major: Datatype
+    //     minor: Can't get value
+    //   #007: H5T.c line 5028 in H5T__path_find_real(): no appropriate function for conversion path
+    //     major: Datatype
+    //     minor: Unable to initialize object
+    // terminate called after throwing an instance of 'HighFive::DataSetException'
+    //   what():  Error during HDF5 Write:
+    //
+    // dset_cc.write(ci);
+
+    // What about writing integer to float?
+    DataSet dset_float = file_windows.createDataSet<double>("float", DataSpace::From(cd));
+    // HighFive WARNING "/float": data and hdf5 dataset have different types:
+    // Integer64 -> Float64
+    dset_float.write(ci);
+    // ...but it does work.
 
     return 0;
 }

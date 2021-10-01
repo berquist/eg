@@ -2,6 +2,8 @@
 #define INTERFACE_HPP_
 
 #include <highfive/H5File.hpp>
+#include "span.hpp"
+#include "get_dims.hpp"
 
 using namespace HighFive;
 
@@ -21,8 +23,28 @@ public:
 
     template <typename T>
     void write(const std::string &path, const T &value) {
-        DataSet dset = m_file.createDataSet(path, value);
+        if (!m_file.exist(path)) {
+            // TODO check if a group
+            DataSet dset = m_file.createDataSet(path, value);
+        } else {
+            DataSet dset = m_file.getDataSet(path);
+            const DataSpace dspace = dset.getSpace();
+            const std::vector<size_t> dims = dspace.getDimensions();
+            const std::vector<size_t> dims_max = dspace.getMaxDimensions();
+            if (get_dims<T>(value) != dims) {
+                throw std::runtime_error("dims don't match");
+            } else {
+                dset.write(value);
+            }
+        }
     }
+
+    /**
+     *
+     * The dimensions of the passed value are assumed
+     */
+    template <typename T>
+    void write(const std::string &path, const T &value, const std::vector<Span> &window);
 
     std::vector<std::string> get_paths() const {
         std::vector<std::string> paths;
