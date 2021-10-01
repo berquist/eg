@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
 project(highfive_examples C CXX)
 
-add_library(get_dims get_dims.cpp)
-
 find_package(HighFive)
 find_package(Armadillo)
+
+add_library(get_dims get_dims.cpp)
+add_library(common common.cpp)
 
 add_executable(arma.x arma.cpp)
 target_link_libraries(arma.x get_dims HighFive ${ARMADILLO_LIBRARIES})
@@ -19,3 +20,6 @@ target_link_libraries(aview.x get_dims aview HighFive ${ARMADILLO_LIBRARIES})
 
 add_executable(stl.x stl.cpp)
 target_link_libraries(stl.x get_dims HighFive)
+
+add_executable(pod.x pod.cpp)
+target_link_libraries(pod.x common get_dims HighFive)

@@ -1,5 +1,10 @@
+#ifndef COMMON_HPP_
+#define COMMON_HPP_
+
 #include <iostream>
 #include <vector>
+
+#include <highfive/H5File.hpp>
 
 template<typename T>
 std::ostream& operator<<(std::ostream &os, const std::vector<T> &v) {
@@ -8,3 +13,7 @@ std::ostream& operator<<(std::ostream &os, const std::vector<T> &v) {
     }
     return os;
 }
+
+std::ostream& operator<<(std::ostream &os, const HighFive::ObjectType &ot);
+
+#endif // COMMON_HPP_

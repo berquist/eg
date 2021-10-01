@@ -46,3 +46,8 @@ template <>
 std::vector<std::size_t> get_dims(const arma::Cube<double> &value) {
     return {value.n_slices, value.n_rows, value.n_cols};
 }
+
+template <>
+std::vector<std::size_t> get_dims(const arma::Cube<std::complex<double>> &value) {
+    return {value.n_slices, value.n_rows, value.n_cols};
+}

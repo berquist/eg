@@ -4,35 +4,6 @@
 
 using namespace HighFive;
 
-std::ostream& operator<<(std::ostream &os, const ObjectType &ot) {
-    switch (ot) {
-    case ObjectType::File:
-        os << "ObjectType::File";
-        break;
-    case ObjectType::Group:
-        os << "ObjectType::Group";
-        break;
-    case ObjectType::UserDataType:
-        os << "ObjectType::UserDataType";
-        break;
-    case ObjectType::DataSpace:
-        os << "ObjectType::DataSpace";
-        break;
-    case ObjectType::Dataset:
-        os << "ObjectType::Dataset";
-        break;
-    case ObjectType::Attribute:
-        os << "ObjectType::Attribute";
-        break;
-    case ObjectType::Other:
-        os << "ObjectType::Other";
-        break;
-    default:
-        throw std::invalid_argument("invalid argument to operator<< for HighFive::ObjectType");
-    }
-    return os;
-}
-
 /** Write a STL vector of Armadillo matrices with the STL vector index as the first index.
  *
  */
@@ -125,41 +96,6 @@ int main() {
     iface.write("/mats/rm2", rm2);
     iface.write("/nested/mats/rm2", rm2);
 
-    const std::string mystring("I am just a string");
-    iface.write("/strings/s1", mystring);
-    std::string mynewstring;
-    iface.read("/strings/s1", mynewstring);
-    std::cout << mynewstring << std::endl;
-
-    const double n1_ = 1.23;
-    const int n2_ = 4;
-    const size_t n3_ = size_t(4);
-    iface.write("/nums/n1", n1_);
-    iface.write("/nums/n2", n2_);
-    iface.write("/nums/n3", n3_);
-    // DataSet dset_double = file.createDataSet("/nums/n1", 1.23);
-    // DataSet dset_int = file.createDataSet("/nums/n2", 4);
-    // DataSet dset_sizet = file.createDataSet("/nums/n3", size_t(4));
-    double n1;
-    int n2;
-    size_t n3;
-    iface.read("/nums/n1", n1);
-    iface.read("/nums/n2", n2);
-    iface.read("/nums/n3", n3);
-    std::cout << "n1: " << n1 << std::endl;
-    std::cout << "n2: " << n2 << std::endl;
-    std::cout << "n3: " << n3 << std::endl;
-
-    std::cout << file.listObjectNames() << std::endl;
-    std::cout << "exist rv1: " << file.exist("rv1") << std::endl;
-    std::cout << "exist /nums/n3: " << file.exist("/nums/n3") << std::endl;
-    std::cout << "exist nums/n3: " << file.exist("nums/n3") << std::endl;
-
-    const Group group_nums = file.getGroup("nums");
-    std::cout << group_nums.getPath() << std::endl;
-    const ObjectType type_nums = file.getObjectType("nums");
-    std::cout << type_nums << std::endl;
-
     std::cout << iface.get_paths() << std::endl;
 
     // Write a vector into a DataSet that has a different shape but the same
@@ -229,6 +165,7 @@ int main() {
 
     const std::string filename_windows("arma_windows.h5");
     File file_windows(filename_windows, File::ReadWrite | File::Create | File::Truncate);
+    Interface iface_windows(filename_windows);
 
     arma::cx_cube cc(2, 3, 5, arma::fill::randn);
     arma::cx_cube cc2(cc);
@@ -255,13 +192,15 @@ int main() {
     const arma::cube twos_5 = ones_5 * 2.0;
     const arma::cube threes_5 = ones_5 * 3.0;
     const arma::cube ones_1 = arma::cube(1, 1, 1, arma::fill::ones);
+    const arma::cx_cube cx_threes_5(threes_5, threes_5);
+    const arma::cx_cube cx_ones_1(ones_1, ones_1);
 
     // What happens when we try to write something too big of the same type?
-    dset_cc.write(arma::cx_cube(threes_5, threes_5));
+    dset_cc.write(cx_threes_5);
     // -> writes matching space with no offset, drops extra elements!
 
     // What happens when we try to write something too small of the same type?
-    dset_cc.write(arma::cx_cube(ones_1, ones_1));
+    dset_cc.write(cx_ones_1);
     // -> writes matching space with no offset, remaining elements become uninitialized!
 
     // What happens when we try to write something of the right size of a
@@ -305,6 +244,10 @@ int main() {
     // Integer64 -> Float64
     dset_float.write(ci);
     // ...but it does work.
+
+    // Now try writing through the interface.
+    iface_windows.write("cc", cc);
+    iface_windows.write("cc", cx_threes_5);
 
     return 0;
 }
