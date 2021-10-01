@@ -5,12 +5,14 @@
 #include <armadillo>
 #include "highfive_arma.hpp"
 #include "highfive_aview.hpp"
+#include "interface.hpp"
 
 using namespace HighFive;
 
 int main() {
     const std::string filename("aview.h5");
     File file(filename, File::ReadWrite | File::Create | File::Truncate);
+    Interface iface(filename);
 
     const size_t d1 = 2, d2 = 3, d3 = 4, d4 = 5;
     const size_t dt = d1 * d2 * d3 * d4;
@@ -47,7 +49,8 @@ int main() {
     libaview::array_view<double> av2(v2.memptr(), v2.n_elem);
     libaview::tens4d t2(av2, d1, d2, d3, d4);
     DataSet dset_t2 = file.getDataSet("t1");
-    dset_t2.read(t2);
+    // dset_t2.read(t2);
+    iface.read("t1", t2);
     // v2.print("v2");
 
     std::vector<double> v3(dt);
@@ -59,20 +62,23 @@ int main() {
     // v3.clear();
     // v3.resize(dt);
 
-    auto dset_t3 = file.createDataSet<double>("t3", DataSpace::From(av3));
-    dset_t3.write(av3);
+    // auto dset_t3 = file.createDataSet<double>("t3", DataSpace::From(av3));
+    // dset_t3.write(av3);
     // std::cout << v3 << std::endl;
+    iface.write("t3", av3);
 
     const size_t dt2 = d1 * d2 * d3;
     arma::cx_cube cz1(d1, d2, d3, arma::fill::randu);
     libaview::array_view<std::complex<double>> vz1(cz1.memptr(), cz1.n_elem);
     libaview::tens3z tz1(vz1, d1, d2, d3);
 
-    auto dset_z1_arma = file.createDataSet<std::complex<double>>("z1_arma", DataSpace::From(cz1));
-    auto dset_z1_aview = file.createDataSet<std::complex<double>>("z1_aview", DataSpace::From(tz1));
-    dset_z1_arma.write(cz1);
-    dset_z1_aview.write(tz1);
-    cz1.print("cz1");
+    // auto dset_z1_arma = file.createDataSet<std::complex<double>>("z1_arma", DataSpace::From(cz1));
+    // auto dset_z1_aview = file.createDataSet<std::complex<double>>("z1_aview", DataSpace::From(tz1));
+    // dset_z1_arma.write(cz1);
+    // dset_z1_aview.write(tz1);
+    // cz1.print("cz1");
+    iface.write("z1_arma", cz1);
+    iface.write("z1_aview", tz1);
 
     return 0;
 }

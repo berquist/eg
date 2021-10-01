@@ -31,7 +31,7 @@ public:
             const DataSpace dspace = dset.getSpace();
             const std::vector<size_t> dims = dspace.getDimensions();
             const std::vector<size_t> dims_max = dspace.getMaxDimensions();
-            if (get_dims<T>(value) != dims) {
+            if (get_dims(value) != dims) {
                 throw std::runtime_error("dims don't match");
             } else {
                 dset.write(value);
