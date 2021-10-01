@@ -31,9 +31,8 @@ class Interface {
 public:
     Interface(const std::string &filename)
         : m_filename(filename)
-        , m_file(File(filename, File::ReadWrite | File::Create)) {
-
-    }
+        , m_file(File(filename, File::ReadWrite | File::Create))
+        { }
 
     /**
      * Read the windowed selection of the underlying store at the given path
@@ -94,18 +93,18 @@ public:
                 throw std::runtime_error("dims don't match");
             } else {
                 if (window.empty()) {
-                    dset.write(value);                    
+                    dset.write(value);
                 } else {
                     const pair_indices offsets_and_counts = spans_to_offsets_and_counts(window);
-                    const indices offset = offsets_and_counts.first;
-                    const indices count = offsets_and_counts.second;
-                    dset.select(offset, count).write(value);                    
+                    const indices offsets = offsets_and_counts.first;
+                    const indices counts = offsets_and_counts.second;
+                    dset.select(offsets, counts).write(value);
                 }
             }
         }
     }
 
-    std::vector<std::string> get_paths() const {
+    std::vector<std::string> get_paths() const noexcept {
         std::vector<std::string> paths;
         get_paths(m_file.getPath(), paths);
         return paths;

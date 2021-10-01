@@ -13,8 +13,8 @@ public:
             throw std::runtime_error("start must not be greater than stop");
         }
     }
-    // Span(size_t point) : start(point), stop(point) { }
-    // Span(const arma::span &aspan) : start(aspan.a), stop(aspan.b) { }
+    Span(size_t point) : Span(point, point) { }
+    Span(const arma::span &aspan) : Span(aspan.a, aspan.b) { }
 
     const size_t start;
     const size_t stop;

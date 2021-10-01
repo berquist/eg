@@ -25,3 +25,10 @@ target_link_libraries(stl.x HighFive)
 
 add_executable(pod.x pod.cpp)
 target_link_libraries(pod.x common HighFive)
+
+enable_testing()
+find_package(GTest)
+
+add_executable(test_span.x test_span.cpp)
+target_link_libraries(test_span.x ${GTEST_BOTH_LIBRARIES})
+add_test(test_span test_span.x)
