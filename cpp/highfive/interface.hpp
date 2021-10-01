@@ -1,6 +1,7 @@
 #ifndef INTERFACE_HPP_
 #define INTERFACE_HPP_
 
+#include <utility>
 #include "common.hpp"
 #include <highfive/H5File.hpp>
 #include "span.hpp"
@@ -12,6 +13,20 @@
 
 using namespace HighFive;
 
+typedef std::vector<size_t> indices;
+typedef std::pair<indices, indices> pair_indices;
+
+pair_indices spans_to_offsets_and_counts(const std::vector<Span> &spans) {
+    indices offsets;
+    indices counts;
+    for (auto span : spans) {
+        offsets.push_back(span.start);
+        // stop is inclusive
+        counts.push_back(span.stop - span.start + 1);
+    }
+    return std::make_pair(offsets, counts);
+}
+
 class Interface {
 public:
     Interface(const std::string &filename)
@@ -20,18 +35,54 @@ public:
 
     }
 
+    /**
+     * Read the windowed selection of the underlying store at the given path
+     * into the given value.
+     */
     template <typename T>
-    void read(const std::string &path, T &value) const {
+    void read(const std::string &path, T &value, const std::vector<Span> &window = {}) const {
+        // TODO allow HighFive exception?
         DataSet dset = m_file.getDataSet(path);
-        dset.read(value);
+        if (window.empty()) {
+            dset.read(value);
+        } else {
+            const pair_indices offsets_and_counts = spans_to_offsets_and_counts(window);
+            const indices offset = offsets_and_counts.first;
+            const indices count = offsets_and_counts.second;
+            dset.select(offset, count).read(value);
+        }
     }
 
+    /**
+     * Write the given value to the windowed selection of the given path at
+     * the underlying store.
+     *
+     * If a window isn't given, then the whole extent of the dataset will be
+     * written to.
+     *
+     * If it doesn't make sense for the given value to have a window/selection
+     * applied, then an exception is thrown.  It only applies to things like
+     * std::vector, Armadillo objects, libaview array_views/tensors, etc.
+     *
+     * If the path doesn't already exist, then the amount of space created in
+     * the underlying store is equal to the size of the given window.  (If
+     * there were separate add/update methods, then you couldn't add something
+     * with a window, that wouldn't make any sense.)
+     *
+     * If the path already exists, the dimensions of the passed value are
+     * assumed to fit within the maximum dimensions of the underlying
+     * dataspace.
+     */
     template <typename T>
-    void write(const std::string &path, const T &value) {
+    void write(const std::string &path, const T &value, const std::vector<Span> &window = {}) {
         if (!m_file.exist(path)) {
+            if (!window.empty()) {
+                throw std::runtime_error("it doesn't make sense to specify writing a subset to a nonexistent entry");
+            }
             // TODO check if a group
             DataSet dset = m_file.createDataSet(path, value);
         } else {
+            // TODO check if a group
             DataSet dset = m_file.getDataSet(path);
             const DataSpace dspace = dset.getSpace();
             const std::vector<size_t> dims = dspace.getDimensions();
@@ -42,17 +93,17 @@ public:
                 std::cout << " dims: " << dims << std::endl;
                 throw std::runtime_error("dims don't match");
             } else {
-                dset.write(value);
+                if (window.empty()) {
+                    dset.write(value);                    
+                } else {
+                    const pair_indices offsets_and_counts = spans_to_offsets_and_counts(window);
+                    const indices offset = offsets_and_counts.first;
+                    const indices count = offsets_and_counts.second;
+                    dset.select(offset, count).write(value);                    
+                }
             }
         }
     }
-
-    /**
-     *
-     * The dimensions of the passed value are assumed
-     */
-    template <typename T>
-    void write(const std::string &path, const T &value, const std::vector<Span> &window);
 
     std::vector<std::string> get_paths() const {
         std::vector<std::string> paths;
@@ -83,7 +134,7 @@ private:
             }
         }
     }
-    
+
 };
 
 #endif // INTERFACE_HPP_
