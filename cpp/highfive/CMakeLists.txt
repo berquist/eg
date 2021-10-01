@@ -4,12 +4,15 @@ project(highfive_examples C CXX)
 find_package(HighFive)
 find_package(Armadillo)
 
+add_subdirectory(libaview)
+# blergh...
+include_directories(libaview)
+
 add_library(common common.cpp)
 
 add_executable(arma.x arma.cpp)
 target_link_libraries(arma.x HighFive ${ARMADILLO_LIBRARIES})
 
-add_subdirectory(libaview)
 add_executable(aview.x aview.cpp)
 # target_include_directories(aview.x PRIVATE ${LIBAVIEW_SOURCE_DIR})
 target_link_libraries(aview.x aview HighFive ${ARMADILLO_LIBRARIES})

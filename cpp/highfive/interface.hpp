@@ -1,9 +1,14 @@
 #ifndef INTERFACE_HPP_
 #define INTERFACE_HPP_
 
+#include "common.hpp"
 #include <highfive/H5File.hpp>
 #include "span.hpp"
 #include "get_dims.hpp"
+
+// FIXME how to have these not infect everything that includes this file?
+#include "get_dims_arma.hpp"
+#include "get_dims_aview.hpp"
 
 using namespace HighFive;
 
@@ -31,7 +36,10 @@ public:
             const DataSpace dspace = dset.getSpace();
             const std::vector<size_t> dims = dspace.getDimensions();
             const std::vector<size_t> dims_max = dspace.getMaxDimensions();
-            if (get_dims(value) != dims) {
+            const std::vector<size_t> dims_value = get_dims(value);
+            if (dims_value != dims) {
+                std::cout << " dims_value: " << dims_value << std::endl;
+                std::cout << " dims: " << dims << std::endl;
                 throw std::runtime_error("dims don't match");
             } else {
                 dset.write(value);

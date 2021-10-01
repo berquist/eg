@@ -79,6 +79,7 @@ int main() {
     // cz1.print("cz1");
     iface.write("z1_arma", cz1);
     iface.write("z1_aview", tz1);
+    iface.write("z1_arma", tz1);
 
     return 0;
 }
