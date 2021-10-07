@@ -2,6 +2,8 @@
 #include <curand_kernel.h>
 #include <curand.h>
 
+// Adapted from
+// https://stackoverflow.com/questions/26650391/generate-random-number-within-a-function-with-curand-without-preallocation
 __global__ void myfunc(double *vals, size_t n) {
     int tId = threadIdx.x + (blockIdx.x * blockDim.x);
     curandState state;
@@ -12,6 +14,8 @@ __global__ void myfunc(double *vals, size_t n) {
     }
 }
 
+// Adapted from
+// https://stackoverflow.com/questions/7989039/use-of-cudamalloc-why-the-double-pointer
 int main() {
     size_t n = 20;
     size_t num_bytes = n * sizeof(double);
