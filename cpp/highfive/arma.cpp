@@ -249,14 +249,28 @@ int main() {
     // iface_windows.write("cc", cc);
     // iface_windows.write("cc", cx_threes_5);
 
+    const DataSet dset_col = file.getDataSet("/vecs/rv2");
+    const DataSet dset_row = file.getDataSet("/vecs/rv4");
+
     // Dimensions for vectors should be like (n, 1) or (1, n) for column and
     // row vectors, respectively.
-    const DataSpace dspace_col = file.getDataSet("/vecs/rv2").getSpace();
-    const DataSpace dspace_row = file.getDataSet("/vecs/rv4").getSpace();
+    const DataSpace dspace_col = dset_col.getSpace();
+    const DataSpace dspace_row = dset_row.getSpace();
     std::cout << "dspace_col.getDimensions: " << dspace_col.getDimensions() << std::endl;
     std::cout << "dspace_col.getMaxDimensions: " << dspace_col.getMaxDimensions() << std::endl;
     std::cout << "dspace_row.getDimensions: " << dspace_row.getDimensions() << std::endl;
     std::cout << "dspace_row.getMaxDimensions: " << dspace_row.getMaxDimensions() << std::endl;
+
+    const DataSpace dspace_cc235 = DataSpace::From(cc);
+    const DataSpace dspace_cxthrees5 = DataSpace::From(cx_threes_5);
+    std::cout << "dspace_cc235.getType: " << dspace_cc235.getType() << std::endl;
+    std::cout << "dspace_cxthrees5.getType: " << dspace_cxthrees5.getType() << std::endl;
+
+    const DataType dtype_col = dset_col.getDataType();
+    const DataType dtype_row = dset_row.getDataType();
+    std::cout << dtype_col << std::endl;
+    std::cout << dtype_row << std::endl;
+    std::cout << (dtype_col == dtype_row) << std::endl;
 
     return 0;
 }

@@ -11,7 +11,7 @@ include_directories(libaview)
 add_library(common common.cpp)
 
 add_executable(arma.x arma.cpp)
-target_link_libraries(arma.x HighFive ${ARMADILLO_LIBRARIES})
+target_link_libraries(arma.x HighFive ${ARMADILLO_LIBRARIES} common)
 
 add_executable(aview.x aview.cpp)
 # target_include_directories(aview.x PRIVATE ${LIBAVIEW_SOURCE_DIR})

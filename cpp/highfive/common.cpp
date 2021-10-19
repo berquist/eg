@@ -30,3 +30,13 @@ std::ostream& operator<<(std::ostream &os, const ObjectType &ot) {
     }
     return os;
 }
+
+std::ostream& operator<<(std::ostream &os, const DataTypeClass &dtc) {
+    os << type_class_string(dtc);
+    return os;
+}
+
+std::ostream& operator<<(std::ostream &os, const DataType &dt) {
+    os << dt.string();
+    return os;
+}

@@ -15,5 +15,7 @@ std::ostream& operator<<(std::ostream &os, const std::vector<T> &v) {
 }
 
 std::ostream& operator<<(std::ostream &os, const HighFive::ObjectType &ot);
+std::ostream& operator<<(std::ostream &os, const HighFive::DataTypeClass &dtc);
+std::ostream& operator<<(std::ostream &os, const HighFive::DataType &dt);
 
 #endif // COMMON_HPP_
