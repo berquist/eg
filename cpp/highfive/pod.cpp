@@ -44,5 +44,13 @@ int main() {
     const ObjectType type_nums = file.getObjectType("nums");
     std::cout << type_nums << std::endl;
 
+    // Dimensions for scalars should all be empty.
+    const DataSpace dspace_string = file.getDataSet("/strings/s1").getSpace();
+    const DataSpace dspace_double = file.getDataSet("/nums/n1").getSpace();
+    std::cout << "dspace_string.getDimensions: " << dspace_string.getDimensions() << std::endl;
+    std::cout << "dspace_double.getDimensions: " << dspace_double.getDimensions() << std::endl;
+    std::cout << "dspace_string.getMaxDimensions: " << dspace_string.getMaxDimensions() << std::endl;
+    std::cout << "dspace_double.getMaxDimensions: " << dspace_double.getMaxDimensions() << std::endl;
+
     return 0;
 }

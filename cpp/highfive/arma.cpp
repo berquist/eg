@@ -82,7 +82,7 @@ int main() {
     iface.read("/vecs/rv2", rv3);
     rv3.print("rv3 (that is rv2)");
 
-    iface.write("/vecs/rv4", arma::Col<double>(3, arma::fill::randn));
+    iface.write("/vecs/rv4", arma::Row<double>(3, arma::fill::randn));
     arma::cube rc3(2, 3, 4, arma::fill::randn);
     rc3.print("rc3");
     iface.write("/cubes/rc3", rc3);
@@ -246,8 +246,17 @@ int main() {
     // ...but it does work.
 
     // Now try writing through the interface.
-    iface_windows.write("cc", cc);
-    iface_windows.write("cc", cx_threes_5);
+    // iface_windows.write("cc", cc);
+    // iface_windows.write("cc", cx_threes_5);
+
+    // Dimensions for vectors should be like (n, 1) or (1, n) for column and
+    // row vectors, respectively.
+    const DataSpace dspace_col = file.getDataSet("/vecs/rv2").getSpace();
+    const DataSpace dspace_row = file.getDataSet("/vecs/rv4").getSpace();
+    std::cout << "dspace_col.getDimensions: " << dspace_col.getDimensions() << std::endl;
+    std::cout << "dspace_col.getMaxDimensions: " << dspace_col.getMaxDimensions() << std::endl;
+    std::cout << "dspace_row.getDimensions: " << dspace_row.getDimensions() << std::endl;
+    std::cout << "dspace_row.getMaxDimensions: " << dspace_row.getMaxDimensions() << std::endl;
 
     return 0;
 }
