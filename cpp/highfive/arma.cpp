@@ -43,6 +43,27 @@ void write(File &file, const std::string &name, const std::vector<arma::Cube<T>>
     }
 }
 
+template<typename T>
+struct inner_type_impl
+{
+    using type = T;
+};
+
+template<template<typename> class E, typename T>
+struct inner_type_impl<E<T>>
+{
+    // using type = typename inner_type_impl<T>::type;
+    using type = T;
+};
+
+template<typename T>
+using inner_type = typename inner_type_impl<T>::type;
+
+template <typename T>
+DataType get_dtype(const T &val) {
+    return create_and_check_datatype<inner_type<decltype(static_cast<T>(const_cast<T&>(val)))>>();
+}
+
 int main() {
     const std::string filename("arma.h5");
     File file(filename, File::ReadWrite | File::Create | File::Truncate);
@@ -268,9 +289,19 @@ int main() {
 
     const DataType dtype_col = dset_col.getDataType();
     const DataType dtype_row = dset_row.getDataType();
-    std::cout << dtype_col << std::endl;
-    std::cout << dtype_row << std::endl;
-    std::cout << (dtype_col == dtype_row) << std::endl;
+    // std::cout << dtype_col << std::endl;
+    // std::cout << dtype_row << std::endl;
+    // std::cout << (dtype_col == dtype_row) << std::endl;
+
+    // const DataType dtype_complex = create_and_check_datatype<innermost<decltype(cm)>>();
+    const DataType dtype_complex = get_dtype(cm);
+    const DataType dtype_real = get_dtype(cc);
+    const DataType dtype_complex2 = create_and_check_datatype<std::complex<double>>();
+    std::cout << "dtype_complex: " << dtype_complex << std::endl;
+    std::cout << "dtype_real: " << dtype_real << std::endl;
+    std::cout << (dtype_complex == dtype_real) << std::endl;
+    std::cout << dtype_complex2 << std::endl;
+    std::cout << (dtype_complex == dtype_complex2) << std::endl;
 
     return 0;
 }

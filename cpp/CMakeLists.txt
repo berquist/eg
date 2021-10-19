@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.0)
 project(eg CXX)
 
 set(SRC
@@ -23,4 +23,5 @@ add_subdirectory(eigen)
 add_subdirectory(H5CPP)
 add_subdirectory(hdf5)
 add_subdirectory(unique_ptr)
+add_subdirectory(templates)
 add_subdirectory(xtensor)
