@@ -1,4 +1,6 @@
+*.html
 .ccls
+.ccls-cache/
 .vscode
 
 ### Python

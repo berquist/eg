@@ -6,6 +6,8 @@ set(SRC
     25187583_single
     25200473
     25200473_arma
+    decltype_examples
+    type_traits_examples
 )
 
 foreach(file ${SRC})
