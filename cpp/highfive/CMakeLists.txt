@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 project(highfive_examples C CXX)
 
-find_package(HighFive)
-find_package(Armadillo)
+set(CMAKE_CXX_STANDARD 11)
+
+find_package(HighFive REQUIRED)
+find_package(Armadillo REQUIRED)
 
 add_subdirectory(libaview)
 # blergh...
@@ -21,7 +23,7 @@ target_link_libraries(aview.x aview HighFive ${ARMADILLO_LIBRARIES})
 # target_link_libraries(eigen.x HighFive)
 
 add_executable(stl.x stl.cpp)
-target_link_libraries(stl.x HighFive)
+target_link_libraries(stl.x HighFive ${ARMADILLO_LIBRARIES})
 
 add_executable(pod.x pod.cpp)
 target_link_libraries(pod.x common HighFive)

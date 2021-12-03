@@ -2,6 +2,8 @@
 #include <tuple>
 #include <type_traits>
 
+#include <vector>
+
 // Question: https://stackoverflow.com/questions/25187323/how-can-i-get-the-innermost-template-parameter-type
 // adapted from https://stackoverflow.com/a/25187583
 
@@ -27,6 +29,8 @@ struct X;
 static_assert(std::is_same<inner<X<X<X<int>>>>, X<X<int>>>::value, "");
 static_assert(std::is_same<inner<std::complex<double>>, double>::value, "");
 static_assert(std::is_same<inner<X<std::complex<double>>>, std::complex<double>>::value, "");
+// static_assert(std::is_same<inner<std::vector<double>>, double>::value, "");
+// static_assert(std::is_same<>, "");
 
 int main()
 {
