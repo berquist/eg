@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(var_prepend CXX)
+project(var_prepend NONE)
 
 set(SRC
     configurable.C

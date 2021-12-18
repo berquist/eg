@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.8)
+project(list_membership NONE)
+
+function(_file_name_contains lst stub contains)
+    set(${contains} 0 PARENT_SCOPE)
+    foreach(item ${${lst}})
+        message(STATUS "   ${item}")
+        get_filename_component(_name "${item}" NAME)
+        message(STATUS "   ${_name}")
+        if("${_name}" MATCHES ".*${stub}.*")
+            message(STATUS "   match!")
+            set(${contains} 1 PARENT_SCOPE)
+            return()
+        endif()
+    endforeach(item)
+endfunction(_file_name_contains)
+
+set(l1 "/home/ymao90/qchem/qc_ext_libs/hdf5/lib/libhdf5.a;/usr/lib64/libz.so;/usr/lib64/libdl.so;/usr/lib64/libm.so")
+set(l2 "/usr/lib64/librt.so;/usr/lib64/libpthread.so;/opt/intel/2019update1/intelpython3/lib/libz.so;/usr/lib64/libdl.so;/usr/lib64/libm.so")
+
+message(STATUS "## contains: ${contains}")
+_file_name_contains(l1 "hdf5" l1_contains)
+message(STATUS "## contains: ${contains}")
+_file_name_contains(l2 "hdf5" l2_contains)
+message(STATUS "## contains: ${contains}")
+
+message(STATUS "## l1_contains: ${l1_contains}")
+message(STATUS "## l2_contains: ${l2_contains}")

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(removing_duplicates CXX)
+project(removing_duplicates NONE)
 
 # CMake versions < 3.14 error when an undefined variable is passed to
 # REMOVE_DUPLICATES.
