@@ -1,13 +1,17 @@
 cmake_minimum_required(VERSION 3.0)
 project(template_examples C CXX)
 
+find_package(Armadillo REQUIRED)
+
 set(SRC
     25200473_arma
+    nested
     type_traits_examples
 )
 
 foreach(file ${SRC})
     add_executable(${file}.x ${file}.cpp)
+    target_link_libraries(${file}.x ${ARMADILLO_LIBRARIES})
 endforeach(file)
 
 set(SRC_MULTI
