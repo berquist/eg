@@ -3,6 +3,7 @@ project(eg CXX)
 
 set(SRC
     int_size_t_comparison
+    return_const_reference
     string_conversion
     test_getenv
     test_openmp_2
@@ -20,9 +21,17 @@ endforeach(file)
 add_subdirectory(armadillo)
 # add_subdirectory(arrayfire_playground)
 # add_subdirectory(boost)
-add_subdirectory(eigen)
-add_subdirectory(H5CPP)
+# add_subdirectory(cereal)
+# add_subdirectory(eigen)
+# add_subdirectory(h5cpp)
+# add_subdirectory(H5CPP)
 add_subdirectory(hdf5)
+# add_subdirectory(highfive)
+add_subdirectory(libint2)
+add_subdirectory(rtti)
+add_subdirectory(seeandsay)
 add_subdirectory(unique_ptr)
 add_subdirectory(templates)
+# add_subdirectory(transmute)
+# add_subdirectory(unique_ptr)
 # add_subdirectory(xtensor)
