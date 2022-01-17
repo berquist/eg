@@ -6,6 +6,7 @@ find_package(Armadillo REQUIRED)
 set(SRC
     25200473_arma
     nested
+    outer
     type_traits_examples
 )
 
