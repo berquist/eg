@@ -4,6 +4,7 @@ project(template_examples C CXX)
 find_package(Armadillo REQUIRED)
 
 set(SRC
+    6398890
     25200473_arma
     fibonacci
     nested
