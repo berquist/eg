@@ -5,7 +5,7 @@ typedef unsigned long long fib_t;
 
 // personal solution
 
-constexpr fib_t fib_stack(fib_t n) {
+fib_t fib_stack(fib_t n) {
     if (n == 0) {
         return 0;
     } else if (n == 1) {

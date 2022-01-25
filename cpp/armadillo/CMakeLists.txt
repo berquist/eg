@@ -1,7 +1,7 @@
 project(EG_ARMADILLO)
 cmake_minimum_required(VERSION 3.0)
 
-find_package(Armadillo)
+find_package(Armadillo REQUIRED)
 
 set(SRC_ARMA
     arma_aniso

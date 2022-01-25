@@ -9,11 +9,13 @@ set(SRC
     fibonacci
     nested
     outer
+    # string_join
     type_traits_examples
 )
 
 foreach(file ${SRC})
     add_executable(${file}.x ${file}.cpp)
+    set_target_properties(${file}.x PROPERTIES CXX_STANDARD 11)
     target_link_libraries(${file}.x ${ARMADILLO_LIBRARIES})
 endforeach(file)
 
