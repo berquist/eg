@@ -6,7 +6,7 @@ std::unique_ptr<Dummy> make_dummy() {
     return std::make_unique<Dummy>();
 }
 
-void print_dummy(std::unique_ptr<Dummy> &ptr) {
+void print_dummy(const std::unique_ptr<Dummy> &ptr) {
     printf("%d %c\n", ptr->x, ptr->y);
     printf("%p\n", ptr.get());
 }
