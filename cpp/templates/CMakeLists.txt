@@ -6,6 +6,7 @@ find_package(Armadillo REQUIRED)
 set(SRC
     6398890
     25200473_arma
+    dependents
     fibonacci
     nested
     outer
