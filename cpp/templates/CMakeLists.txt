@@ -10,6 +10,7 @@ set(SRC
     fibonacci
     nested
     outer
+    static_assert
     # string_join
     type_traits_examples
 )
