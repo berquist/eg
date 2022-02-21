@@ -28,6 +28,8 @@ struct entry {
 };
 
 // This kind of entry also keeps track of the schema struct it's contained in.
+// However, we can't keep a pointer to the parent entry (_), since its TC is
+// not fixed.
 template<typename TD, typename TC>
 struct entry2 {
     const char *key;
@@ -162,6 +164,21 @@ std::ostream& operator<<(std::ostream &os, const std::vector<T> &v) {
     return os;
 }
 
+std::vector<std::string> split(const std::string &s, const std::string &delimiter) {
+    size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+    std::string token;
+    std::vector<std::string> res;
+
+    while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+        token = s.substr (pos_start, pos_end - pos_start);
+        pos_start = pos_end + delim_len;
+        res.push_back(token);
+    }
+
+    res.push_back(s.substr(pos_start));
+    return res;
+}
+
 template<typename TD>
 void traverse(const entry<TD> &e) {
     std::vector<std::string> components{std::string(e.key)};
@@ -174,12 +191,34 @@ void traverse(const entry<TD> &e) {
     std::cout << components << std::endl;
 }
 
+// template<typename TD>
+// void traverse(const entry2<TD, schema_base> &e) {
+    
+// }
+
+template<typename T>
+void traverse_schema();
+
+template<> void traverse_schema<schema_base>() {
+    std::cout << "base" << std::endl;
+}
+
+template<typename T>
+void traverse_schema() {
+    std::vector<std::string> components = split(type_name<T>(), "::");
+    std::cout << components[components.size() - 1] << std::endl;
+    traverse_schema<outer_class_of_t<T>>();
+}
+
 template<typename TD, typename TC>
-void traverse(const entry2<TD, TC> e) {
+void traverse(const entry2<TD, TC> &e) {
     // TODO two possible options:
     // 1. type_name provides the fully-qualified (?) name, just split on "::" to get the pieces
-    // 2. use type_name, split on "::", then take the last component to get
-    //    the name of this, then use inner_type_of TC in a recursive traverse call
+    // 2. use type_name, split on "::", then take the last component,
+    //    then use TC in call to traverse_schema that recursively uses outer_class_of_t
+    // go with option 2? easy to check if something is `is_iter` or similar
+    std::cout << e.key << std::endl;
+    traverse_schema<TC>();
 }
 
 int main() {
