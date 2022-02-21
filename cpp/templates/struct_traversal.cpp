@@ -197,17 +197,24 @@ void traverse(const entry<TD> &e) {
 // }
 
 template<typename T>
-void traverse_schema();
+void traverse_schema(std::vector<std::string> &path_components);
 
-template<> void traverse_schema<schema_base>() {
-    std::cout << "base" << std::endl;
-}
+// None of these things belong in the path components.
+template<>
+void traverse_schema<schema_base>(std::vector<std::string> &path_components) { }
+template<>
+void traverse_schema<energy_functions2>(std::vector<std::string> &path_components) { }
 
 template<typename T>
-void traverse_schema() {
-    std::vector<std::string> components = split(type_name<T>(), "::");
-    std::cout << components[components.size() - 1] << std::endl;
-    traverse_schema<outer_class_of_t<T>>();
+void traverse_schema(std::vector<std::string> &path_components) {
+    // constexpr bool do_iter = std::is_base_of<iterable, container>::value && std::is_base_of<is_iter, T>::value;
+    constexpr bool is_iteration = std::is_base_of<is_iter, T>::value;
+    const std::vector<std::string> components = split(type_name<T>(), "::");
+    if (is_iteration) {
+        path_components.push_back(counter_placeholder);
+    }
+    path_components.push_back(components[components.size() - 1]);
+    traverse_schema<outer_class_of_t<T>>(path_components);
 }
 
 template<typename TD, typename TC>
@@ -217,8 +224,11 @@ void traverse(const entry2<TD, TC> &e) {
     // 2. use type_name, split on "::", then take the last component,
     //    then use TC in call to traverse_schema that recursively uses outer_class_of_t
     // go with option 2? easy to check if something is `is_iter` or similar
-    std::cout << e.key << std::endl;
-    traverse_schema<TC>();
+    std::vector<std::string> path_components;
+    path_components.push_back(e.key);
+    traverse_schema<TC>(path_components);
+    std::reverse(path_components.begin(), path_components.end());
+    std::cout << path_components << std::endl;
 }
 
 int main() {
