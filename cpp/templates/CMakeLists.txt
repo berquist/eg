@@ -12,6 +12,7 @@ set(SRC
     outer
     static_assert
     # string_join
+    struct_traversal
     type_traits_examples
 )
 
