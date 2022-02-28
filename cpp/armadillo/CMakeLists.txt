@@ -22,13 +22,11 @@ set(SRC_ARMA
     transpose
     )
 
-if(${ARMADILLO_FOUND})
-    message(STATUS "SRC_ARMA: ${SRC_ARMA}")
-    foreach(file ${SRC_ARMA})
-        add_executable(${file}.x ${file}.cpp)
-        target_link_libraries(${file}.x ${ARMADILLO_LIBRARIES})
-    endforeach(file)
-endif()
+message(STATUS "SRC_ARMA: ${SRC_ARMA}")
+foreach(file ${SRC_ARMA})
+    add_executable(${file}.x ${file}.cpp)
+    target_link_libraries(${file}.x ${ARMADILLO_LIBRARIES})
+endforeach(file)
 
 add_subdirectory(class_template_2)
 add_subdirectory(class_template_header)

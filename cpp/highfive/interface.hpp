@@ -9,7 +9,7 @@
 
 // FIXME how to have these not infect everything that includes this file?
 #include "get_dims_arma.hpp"
-#include "get_dims_aview.hpp"
+// #include "get_dims_aview.hpp"
 
 using namespace HighFive;
 

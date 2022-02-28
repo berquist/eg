@@ -6,24 +6,23 @@ set(CMAKE_CXX_STANDARD 11)
 find_package(HighFive REQUIRED)
 find_package(Armadillo REQUIRED)
 
-add_subdirectory(libaview)
+# add_subdirectory(libaview)
 # blergh...
-include_directories(libaview)
+# include_directories(libaview)
 
 add_library(common common.cpp)
 
-add_executable(arma.x arma.cpp)
-target_link_libraries(arma.x HighFive ${ARMADILLO_LIBRARIES} common)
+add_executable(arma_highfive.x arma.cpp)
+target_link_libraries(arma_highfive.x HighFive ${ARMADILLO_LIBRARIES} common)
 
-add_executable(aview.x aview.cpp)
-# target_include_directories(aview.x PRIVATE ${LIBAVIEW_SOURCE_DIR})
-target_link_libraries(aview.x aview HighFive ${ARMADILLO_LIBRARIES})
+# add_executable(aview.x aview.cpp)
+# target_link_libraries(aview.x aview HighFive ${ARMADILLO_LIBRARIES})
 
 # add_executable(eigen.x eigen.cpp)
 # target_link_libraries(eigen.x HighFive)
 
-add_executable(stl.x stl.cpp)
-target_link_libraries(stl.x HighFive ${ARMADILLO_LIBRARIES})
+# add_executable(stl.x stl.cpp)
+# target_link_libraries(stl.x HighFive Armadillo)
 
 add_executable(pod.x pod.cpp)
 target_link_libraries(pod.x common HighFive)

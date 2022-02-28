@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(h5cpp_examples C CXX)
 
-find_package(h5cpp)
-find_package(Armadillo)
+find_package(h5cpp REQUIRED)
+find_package(Armadillo REQUIRED)
 
 add_executable(attribute_creation.x attribute_creation.cpp)
 target_link_libraries(attribute_creation.x h5cpp)

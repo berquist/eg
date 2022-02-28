@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(LIBINT2 CXX)
 
-# blergh
-include("/usr/lib/cmake/libint2/FindLibint2.cmake")
 # find_package(Libint2 REQUIRED)
 
 set(SRC libint2.cpp)
