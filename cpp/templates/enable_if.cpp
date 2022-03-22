@@ -32,5 +32,11 @@ int main() {
     myfunc<int>();
     myfunc<bool>();
     myfunc<float>();
+
+    myclass mc;
+    mc.mymethod<float>();
+    mc.mymethod<int>();
+    mc.mymethod<bool>();
+
     return 0;
 }
