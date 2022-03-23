@@ -21,23 +21,38 @@ typename std::enable_if<std::is_same<T, float>::value, void>::type myfunc() {
 
 class myclass {
 public:
+    // You can't do this...
+    // template<typename T>
+    // void
+    // mymethod();
     template<typename T>
     typename std::enable_if<!(std::is_same<T, float>::value || std::is_same<T, int>::value), void>::type
-    mymethod() {
-        std::cout << "foo bar" << std::endl;
-    }
+    mymethod();
 
     template<typename T>
     typename std::enable_if<std::is_same<T, float>::value, void>::type
-    mymethod() {
-        std::cout << "hello" << std::endl;
-    }
+    mymethod();
 
     template<typename T>
     typename std::enable_if<std::is_same<T, int>::value, void>::type
-    mymethod() {
-        std::cout << "world" << std::endl;
-    }
+    mymethod();
 };
 
+template<typename T>
+typename std::enable_if<!(std::is_same<T, float>::value || std::is_same<T, int>::value), void>::type
+myclass::mymethod() {
+    std::cout << "foo bar" << std::endl;
+}
+
+template<typename T>
+typename std::enable_if<std::is_same<T, float>::value, void>::type
+myclass::mymethod() {
+    std::cout << "hello" << std::endl;
+}
+
+template<typename T>
+typename std::enable_if<std::is_same<T, int>::value, void>::type
+myclass::mymethod() {
+    std::cout << "world" << std::endl;
+}
 #endif // ENABLE_IF_H
