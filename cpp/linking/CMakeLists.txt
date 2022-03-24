@@ -20,3 +20,17 @@ message(STATUS "CMAKE_SHARED_LINKER_FLAGS: ${CMAKE_SHARED_LINKER_FLAGS}")
 # ninja: build stopped: subcommand failed.
 #
 # add_library(ms SHARED missing_symbols.cpp)
+
+# https://stackoverflow.com/q/2894957
+
+# add_library(static_data_1 STATIC static_data_1.cpp)
+# add_library(static_data_2 STATIC static_data_2.cpp)
+# add_executable(static_data.x static_data_main.cpp)
+# target_link_libraries(static_data.x static_data_1 static_data_2)
+
+# add_library(2894957_1 STATIC 2894957_1.cpp)
+# add_executable(2894957.x 2894957_main.cpp)
+# target_link_libraries(2894957.x 2894957_1)
+
+add_executable(6116188.x 6116188_a.cpp 6116188_b.cpp)
+set_target_properties(6116188.x PROPERTIES CXX_STANDARD 11)
