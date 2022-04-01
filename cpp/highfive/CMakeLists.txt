@@ -12,6 +12,12 @@ find_package(Armadillo REQUIRED)
 
 add_library(common common.cpp)
 
+add_executable(highfive_enum.x enum.cpp)
+target_link_libraries(highfive_enum.x HighFive)
+
+add_executable(highfive_compound.x compound.cpp)
+target_link_libraries(highfive_compound.x HighFive)
+
 add_executable(arma_highfive.x arma.cpp)
 target_link_libraries(arma_highfive.x HighFive ${ARMADILLO_LIBRARIES} common)
 
