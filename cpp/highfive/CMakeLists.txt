@@ -11,15 +11,16 @@ find_package(Armadillo REQUIRED)
 # include_directories(libaview)
 
 add_library(common common.cpp)
+target_link_libraries(common HighFive)
 
 add_executable(highfive_enum.x enum.cpp)
-target_link_libraries(highfive_enum.x HighFive)
+target_link_libraries(highfive_enum.x common)
 
 add_executable(highfive_compound.x compound.cpp)
-target_link_libraries(highfive_compound.x HighFive)
+target_link_libraries(highfive_compound.x common)
 
 add_executable(arma_highfive.x arma.cpp)
-target_link_libraries(arma_highfive.x HighFive ${ARMADILLO_LIBRARIES} common)
+target_link_libraries(arma_highfive.x ${ARMADILLO_LIBRARIES} common)
 
 # add_executable(aview.x aview.cpp)
 # target_link_libraries(aview.x aview HighFive ${ARMADILLO_LIBRARIES})
@@ -31,7 +32,7 @@ target_link_libraries(arma_highfive.x HighFive ${ARMADILLO_LIBRARIES} common)
 # target_link_libraries(stl.x HighFive Armadillo)
 
 add_executable(pod.x pod.cpp)
-target_link_libraries(pod.x common HighFive)
+target_link_libraries(pod.x common)
 
 enable_testing()
 find_package(GTest)

@@ -4,48 +4,6 @@
 
 using namespace HighFive;
 
-enum perturbation_type {
-    electric,
-    magnetic,
-    geometric
-};
-
-enum class mecp_algorithm {
-    branching_plane,
-    direct,
-    penalty_function
-};
-
-std::ostream& operator<<(std::ostream &os, const perturbation_type &pt) {
-    switch (pt) {
-    case perturbation_type::electric:
-        os << "perturbation_type::electric";
-        break;
-    case perturbation_type::magnetic:
-        os << "perturbation_type::magnetic";
-        break;
-    case perturbation_type::geometric:
-        os << "perturbation_type::geometric";
-        break;
-    }
-    return os;
-}
-
-std::ostream& operator<<(std::ostream &os, const mecp_algorithm &alg) {
-    switch (alg) {
-    case mecp_algorithm::branching_plane:
-        os << "mecp_algorithm::branching_plane";
-        break;
-    case mecp_algorithm::direct:
-        os << "mecp_algorithm::direct";
-        break;
-    case mecp_algorithm::penalty_function:
-        os << "mecp_algorithm::penalty_function";
-        break;
-    }
-    return os;
-}
-
 enum Position {
     FIRST = 1,
     SECOND = 2,
@@ -124,19 +82,9 @@ TEST_CASE("HighFiveEnum") {
 }
 #endif
 
-EnumType<perturbation_type> create_enum_perturbation_type() {
-    return {{"electric", perturbation_type::electric},
-            {"magnetic", perturbation_type::magnetic},
-            {"geometric", perturbation_type::geometric}};
-}
-HIGHFIVE_REGISTER_TYPE(perturbation_type, create_enum_perturbation_type);
-
-EnumType<mecp_algorithm> create_enum_mecp_algorithm() {
-    return {{"branching_plane", mecp_algorithm::branching_plane},
-            {"direct", mecp_algorithm::direct},
-            {"penalty_function", mecp_algorithm::penalty_function}};
-}
-HIGHFIVE_REGISTER_TYPE(mecp_algorithm, create_enum_mecp_algorithm);
+// TODO why can't these live in common.cpp?
+HIGHFIVE_REGISTER_TYPE(perturbation_type, create_enum_perturbation_type)
+HIGHFIVE_REGISTER_TYPE(mecp_algorithm, create_enum_mecp_algorithm)
 
 int main() {
     const std::string filename("enum.h5");
@@ -182,6 +130,9 @@ int main() {
     auto dset2n = file.createDataSet("e2n", e2);
     // auto dset1tn = file.createDataSet<EnumType<perturbation_type>>("e1tn", e1);
     // auto dset2tn = file.createDataSet<EnumType<mecp_algorithm>>("e2tn", e2);
+
+    iface.write("e1_2", e1);
+    iface.write("e2_2", e2);
 
     return 0;
 }

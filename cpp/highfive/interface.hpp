@@ -1,6 +1,7 @@
 #ifndef INTERFACE_HPP_
 #define INTERFACE_HPP_
 
+#include <type_traits>
 #include <utility>
 #include "common.hpp"
 #include <highfive/H5File.hpp>
@@ -16,7 +17,7 @@ using namespace HighFive;
 typedef std::vector<size_t> indices;
 typedef std::pair<indices, indices> pair_indices;
 
-pair_indices spans_to_offsets_and_counts(const std::vector<Span> &spans) {
+inline pair_indices spans_to_offsets_and_counts(const std::vector<Span> &spans) {
     indices offsets;
     indices counts;
     for (auto span : spans) {
@@ -74,6 +75,15 @@ public:
      */
     template <typename T>
     void write(const std::string &path, const T &value, const std::vector<Span> &window = {}) {
+        // constexpr auto is_enum = std::is_enum<T>::value;
+        // if (is_enum) {
+        //     Group types;
+        //     if (!m_file.exist(".types")) {
+        //         types = m_file.createGroup(".types");
+        //     } else {
+        //         types = m_file.getGroup(".types");
+        //     }
+        // }
         if (!m_file.exist(path)) {
             if (!window.empty()) {
                 throw std::runtime_error("it doesn't make sense to specify writing a subset to a nonexistent entry");
