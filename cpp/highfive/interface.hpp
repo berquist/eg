@@ -211,45 +211,6 @@ private:
 
     const std::string m_name_group_types;
     Group m_group_types;
-
-#if 0
-    template<typename T>
-    void register_type(const std::string &file_type_name) {
-        if (std::is_enum<T>::value) {
-            const auto highfive_type_generating_function = get_highfive_type_generating_function_enum<T>(file_type_name);
-            register_type(highfive_type_generating_function, file_type_name);
-        } else {
-            throw std::runtime_error("unknown type for registration");
-        }
-    }
-
-    // template<typename TGF>
-    // void register_type(TGF highfive_type_generating_function, const std::string &file_type_name) {
-    //     highfive_type_generating_function().commit(m_file, file_type_name);
-    // }
-    template<typename ET>
-    void register_type(
-        const std::function<EnumType<ET>()> &highfive_type_generating_function,
-        const std::string &file_type_name) {
-
-        highfive_type_generating_function().commit(m_file, file_type_name);
-    }
-
-    void register_type(
-        const std::function<CompoundType()> &highfive_type_generating_function,
-        const std::string &file_type_name) {
-
-        highfive_type_generating_function().commit(m_file, file_type_name);
-    }
-#endif
-
-    template<typename T>
-    void register_type(
-        const EnumType<T> &dtype,
-        const std::string &file_type_name) {
-
-        dtype.commit(m_file, file_type_name);
-    }
 };
 
 #endif // INTERFACE_HPP_

@@ -1,10 +1,46 @@
 #include "interface.hpp"
 #include <highfive/H5DataType.hpp>
-#include <type_traits>
+#include "highfive_arma.hpp"
 
 using namespace HighFive;
 
+namespace libstore {
+
+namespace {
+
+template<typename T>
+struct inner_type
+{
+    using type = T;
+};
+
+template<typename T>
+struct inner_type<std::complex<T>>
+{
+    using type = std::complex<T>;
+};
+
+template<template<typename...> class E, typename Head, typename... Tail>
+struct inner_type<E<Head, Tail...>>
+{
+    using type = Head;
+};
+
+} // unnamed namespace
+
+
+template <typename T>
+DataType get_dtype(const T &val) {
+    return create_and_check_datatype<typename inner_type<T>::type>();
+}
+
+std::ostream &operator<<(std::ostream &os, const DataType &dt);
+
+} // namespace libstore
+
 // TODO why can't these live in common.cpp?
+HIGHFIVE_REGISTER_TYPE(perturbation_type, create_enum_perturbation_type)
+HIGHFIVE_REGISTER_TYPE(mecp_algorithm, create_enum_mecp_algorithm)
 HIGHFIVE_REGISTER_TYPE(libarchive::impl::schema::mecp_state, create_compound_mecp_state)
 HIGHFIVE_REGISTER_TYPE(libgscf::rscf_orbitals_d_d, create_compound_rscf_orbitals_d_d)
 
@@ -84,32 +120,56 @@ int main() {
 
     constexpr auto e1 = perturbation_type::magnetic;
     constexpr auto e2 = mecp_algorithm::penalty_function;
+    const arma::vec v1(4, arma::fill::randn);
+    const std::complex<double> c1(2.0, 3.2);
 
-    std::cout << "std::is_enum<decltype(e1)> = " << std::is_enum<decltype(e1)>::value << std::endl;
-    std::cout << "std::is_enum<decltype(e2)> = " << std::is_enum<decltype(e2)>::value << std::endl;
-    std::cout << "std::is_compound<decltype(e1)> = " << std::is_compound<decltype(e1)>::value << std::endl;
-    std::cout << "std::is_compound<decltype(e2)> = " << std::is_compound<decltype(e2)>::value << std::endl;
-    std::cout << "std::is_object<decltype(e1)> = " << std::is_object<decltype(e1)>::value << std::endl;
-    std::cout << "std::is_object<decltype(e2)> = " << std::is_object<decltype(e2)>::value << std::endl;
-
+    std::cout << "std::is_floating_point<std::complex<double>> = " << std::is_floating_point<std::complex<double>>::value << std::endl;
+    std::cout << "std::is_floating_point<arma::vec> = " << std::is_floating_point<arma::vec>::value << std::endl;
+    std::cout << "std::is_floating_point<perturbation_type> = " << std::is_floating_point<perturbation_type>::value << std::endl;
+    std::cout << "std::is_floating_point<mecp_algorithm> = " << std::is_floating_point<mecp_algorithm>::value << std::endl;
+    std::cout << "std::is_floating_point<libarchive::impl::schema::mecp_state> = " << std::is_floating_point<libarchive::impl::schema::mecp_state>::value << std::endl;
+    std::cout << "std::is_array<std::complex<double>> = " << std::is_array<std::complex<double>>::value << std::endl;
+    std::cout << "std::is_array<arma::vec> = " << std::is_array<arma::vec>::value << std::endl;
+    std::cout << "std::is_array<perturbation_type> = " << std::is_array<perturbation_type>::value << std::endl;
+    std::cout << "std::is_array<mecp_algorithm> = " << std::is_array<mecp_algorithm>::value << std::endl;
+    std::cout << "std::is_array<libarchive::impl::schema::mecp_state> = " << std::is_array<libarchive::impl::schema::mecp_state>::value << std::endl;
+    std::cout << "std::is_enum<std::complex<double>> = " << std::is_enum<std::complex<double>>::value << std::endl;
+    std::cout << "std::is_enum<arma::vec> = " << std::is_enum<arma::vec>::value << std::endl;
     std::cout << "std::is_enum<perturbation_type> = " << std::is_enum<perturbation_type>::value << std::endl;
     std::cout << "std::is_enum<mecp_algorithm> = " << std::is_enum<mecp_algorithm>::value << std::endl;
     std::cout << "std::is_enum<libarchive::impl::schema::mecp_state> = " << std::is_enum<libarchive::impl::schema::mecp_state>::value << std::endl;
-    std::cout << "std::is_compound<perturbation_type> = " << std::is_compound<perturbation_type>::value << std::endl;
-    std::cout << "std::is_compound<mecp_algorithm> = " << std::is_compound<mecp_algorithm>::value << std::endl;
-    std::cout << "std::is_compound<libarchive::impl::schema::mecp_state> = " << std::is_compound<libarchive::impl::schema::mecp_state>::value << std::endl;
-    std::cout << "std::is_function<perturbation_type> = " << std::is_function<perturbation_type>::value << std::endl;
-    std::cout << "std::is_function<mecp_algorithm> = " << std::is_function<mecp_algorithm>::value << std::endl;
-    std::cout << "std::is_function<libarchive::impl::schema::mecp_state> = " << std::is_function<libarchive::impl::schema::mecp_state>::value << std::endl;
-    std::cout << "std::is_object<perturbation_type> = " << std::is_object<perturbation_type>::value << std::endl;
-    std::cout << "std::is_object<mecp_algorithm> = " << std::is_object<mecp_algorithm>::value << std::endl;
-    std::cout << "std::is_object<libarchive::impl::schema::mecp_state> = " << std::is_object<libarchive::impl::schema::mecp_state>::value << std::endl;
-    std::cout << "std::is_class<perturbation_type> = " << std::is_class<perturbation_type>::value << std::endl;
-    std::cout << "std::is_class<mecp_algorithm> = " << std::is_class<mecp_algorithm>::value << std::endl;
-    std::cout << "std::is_class<libarchive::impl::schema::mecp_state> = " << std::is_class<libarchive::impl::schema::mecp_state>::value << std::endl;
+    std::cout << "std::is_union<std::complex<double>> = " << std::is_union<std::complex<double>>::value << std::endl;
+    std::cout << "std::is_union<arma::vec> = " << std::is_union<arma::vec>::value << std::endl;
     std::cout << "std::is_union<perturbation_type> = " << std::is_union<perturbation_type>::value << std::endl;
     std::cout << "std::is_union<mecp_algorithm> = " << std::is_union<mecp_algorithm>::value << std::endl;
     std::cout << "std::is_union<libarchive::impl::schema::mecp_state> = " << std::is_union<libarchive::impl::schema::mecp_state>::value << std::endl;
+    std::cout << "std::is_class<std::complex<double>> = " << std::is_class<std::complex<double>>::value << std::endl;
+    std::cout << "std::is_class<arma::vec> = " << std::is_class<arma::vec>::value << std::endl;
+    std::cout << "std::is_class<perturbation_type> = " << std::is_class<perturbation_type>::value << std::endl;
+    std::cout << "std::is_class<mecp_algorithm> = " << std::is_class<mecp_algorithm>::value << std::endl;
+    std::cout << "std::is_class<libarchive::impl::schema::mecp_state> = " << std::is_class<libarchive::impl::schema::mecp_state>::value << std::endl;
+    std::cout << "std::is_function<std::complex<double>> = " << std::is_function<std::complex<double>>::value << std::endl;
+    std::cout << "std::is_function<arma::vec> = " << std::is_function<arma::vec>::value << std::endl;
+    std::cout << "std::is_function<perturbation_type> = " << std::is_function<perturbation_type>::value << std::endl;
+    std::cout << "std::is_function<mecp_algorithm> = " << std::is_function<mecp_algorithm>::value << std::endl;
+    std::cout << "std::is_function<libarchive::impl::schema::mecp_state> = " << std::is_function<libarchive::impl::schema::mecp_state>::value << std::endl;
+
+    std::cout << "std::is_object<std::complex<double>> = " << std::is_object<std::complex<double>>::value << std::endl;
+    std::cout << "std::is_object<arma::vec> = " << std::is_object<arma::vec>::value << std::endl;
+    std::cout << "std::is_object<perturbation_type> = " << std::is_object<perturbation_type>::value << std::endl;
+    std::cout << "std::is_object<mecp_algorithm> = " << std::is_object<mecp_algorithm>::value << std::endl;
+    std::cout << "std::is_object<libarchive::impl::schema::mecp_state> = " << std::is_object<libarchive::impl::schema::mecp_state>::value << std::endl;
+    std::cout << "std::is_compound<std::complex<double>> = " << std::is_compound<std::complex<double>>::value << std::endl;
+    std::cout << "std::is_compound<arma::vec> = " << std::is_compound<arma::vec>::value << std::endl;
+    std::cout << "std::is_compound<perturbation_type> = " << std::is_compound<perturbation_type>::value << std::endl;
+    std::cout << "std::is_compound<mecp_algorithm> = " << std::is_compound<mecp_algorithm>::value << std::endl;
+    std::cout << "std::is_compound<libarchive::impl::schema::mecp_state> = " << std::is_compound<libarchive::impl::schema::mecp_state>::value << std::endl;
+
+    std::cout << "get_dtype(std::complex<double>) = " << libstore::get_dtype(c1) << std::endl;
+    std::cout << "get_dtype(arma::vec) = " << libstore::get_dtype(v1) << std::endl;
+    std::cout << "get_dtype(perturbation_type) = " << libstore::get_dtype(e1) << std::endl;
+    std::cout << "get_dtype(mecp_algorithm) = " << libstore::get_dtype(e2) << std::endl;
+    std::cout << "get_dtype(libarchive::impl::schema::mecp_state) = " << libstore::get_dtype(s1[0]) << std::endl;
 
     iface.write("s1_2", s1);
     iface.write("orbs_2", orbs);
