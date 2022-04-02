@@ -1,4 +1,7 @@
+#include "common.hpp"
 #include "interface.hpp"
+#include <H5Opublic.h>
+#include <H5Tpublic.h>
 #include <highfive/H5DataSpace.hpp>
 #include <highfive/H5DataType.hpp>
 
@@ -86,6 +89,20 @@ TEST_CASE("HighFiveEnum") {
 HIGHFIVE_REGISTER_TYPE(perturbation_type, create_enum_perturbation_type)
 HIGHFIVE_REGISTER_TYPE(mecp_algorithm, create_enum_mecp_algorithm)
 
+template<typename T>
+bool dtype_matches(const T &type_container, const std::string &candidate_type_name, const DataType &other_dtype) {
+    const auto candidate_type_id = H5Oopen(type_container.getId(), candidate_type_name.c_str(), H5P_DEFAULT);
+    if (candidate_type_id < 0) {
+        throw std::runtime_error("failed to open type object");
+    }
+    const bool is_equal = H5Tequal(candidate_type_id, other_dtype.getId()) > 0;
+    const auto close_err = H5Oclose(candidate_type_id);
+    if (close_err < 0) {
+        throw std::runtime_error("failed to close type object");
+    }
+    return is_equal;
+}
+
 int main() {
     const std::string filename("enum.h5");
     File file(filename, File::ReadWrite | File::Create | File::Truncate);
@@ -100,6 +117,9 @@ int main() {
 
     std::cout << unsigned(e1) << std::endl;
     std::cout << unsigned(e2) << std::endl;
+
+    std::cout << type_name<decltype(e1)>() << std::endl;
+    std::cout << type_name<decltype(e2)>() << std::endl;
 
     std::stringstream ss;
     ss.str(std::string());
@@ -133,6 +153,49 @@ int main() {
 
     iface.write("e1_2", e1);
     iface.write("e2_2", e2);
+
+    const auto dset_global = file.getDataSet("e1t");
+    const auto dtype_global = dset_global.getDataType();
+    const auto dset_local = file.getDataSet("e1n");
+    const auto dtype_local = dset_local.getDataType();
+    const auto dtype_other = file.getDataSet("e2t").getDataType();
+    std::cout << "dtype match? (same) = " << (dtype_global == dtype_local) << std::endl;
+    std::cout << "dtype match? (different) = " << (dtype_global == dtype_other) << std::endl;
+    // These are not necessarily the same, even if the DataTypes match.
+    // std::cout << dtype_global.getId() << std::endl;
+    // std::cout << dtype_local.getId() << std::endl;
+    // std::cout << dtype_other.getId() << std::endl;
+
+    // See if the type of the enum maches a type that's already been
+    // committed.
+
+    const std::string candidate_type_name("perturbation_type");
+    const std::string different_type_name("mecp_algorithm");
+    const std::string invalid_type_name("hello_world");
+    const auto type_container = file;
+    if (type_container.exist(candidate_type_name)) {
+        const auto type = type_container.getObjectType(candidate_type_name);
+        if (type == ObjectType::UserDataType) {
+            SilenceHDF5 silencer;
+            const auto candidate_type_id = H5Oopen(type_container.getId(), candidate_type_name.c_str(), H5P_DEFAULT);
+            std::cout << H5Tequal(candidate_type_id, dtype_local.getId()) << std::endl;
+            std::cout << H5Tequal(candidate_type_id, dtype_global.getId()) << std::endl;
+            std::cout << H5Tequal(candidate_type_id, dtype_other.getId()) << std::endl;
+            const auto close_err = H5Oclose(candidate_type_id);
+            const auto invalid_type_id = H5Oopen(type_container.getId(), invalid_type_name.c_str(), H5P_DEFAULT);
+            if (invalid_type_id < 0) {
+                // TODO handle error
+            }
+            std::cout << invalid_type_id << std::endl;
+        } else {
+            //  TODO
+        }
+    }
+    std::cout << "function (local): " << dtype_matches(file, "perturbation_type", dtype_local) << std::endl;
+    std::cout << "function (global): " << dtype_matches(file, "perturbation_type", dtype_global) << std::endl;
+    std::cout << "function (other): " << dtype_matches(file, "perturbation_type", dtype_other) << std::endl;
+    std::cout << "function (function): " << dtype_matches(file, "perturbation_type",  create_enum_perturbation_type()) << std::endl;
+    std::cout << "function (create_and_check): " << dtype_matches(file, "perturbation_type", create_and_check_datatype<perturbation_type>()) << std::endl;
 
     return 0;
 }

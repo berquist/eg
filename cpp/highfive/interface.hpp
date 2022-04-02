@@ -1,6 +1,8 @@
 #ifndef INTERFACE_HPP_
 #define INTERFACE_HPP_
 
+#include "type_name.hpp"
+#include "tgf.hpp"
 #include <type_traits>
 #include <utility>
 #include "common.hpp"
@@ -33,6 +35,8 @@ public:
     Interface(const std::string &filename)
         : m_filename(filename)
         , m_file(File(filename, File::ReadWrite | File::Create))
+        , m_name_group_types(".types")
+        , m_group_types(create_or_get_group(m_name_group_types))
         { }
 
     /**
@@ -74,22 +78,19 @@ public:
      * dataspace.
      */
     template <typename T>
-    void write(const std::string &path, const T &value, const std::vector<Span> &window = {}) {
-        // constexpr auto is_enum = std::is_enum<T>::value;
-        // if (is_enum) {
-        //     Group types;
-        //     if (!m_file.exist(".types")) {
-        //         types = m_file.createGroup(".types");
-        //     } else {
-        //         types = m_file.getGroup(".types");
-        //     }
-        // }
+    void write(
+        const std::string &path,
+        const T &value,
+        const std::vector<Span> &window,
+        std::false_type) {
+
+        std::cout << "not an enum! " << path << std::endl;
         if (!m_file.exist(path)) {
             if (!window.empty()) {
                 throw std::runtime_error("it doesn't make sense to specify writing a subset to a nonexistent entry");
             }
             // TODO check if a group
-            DataSet dset = m_file.createDataSet(path, value);
+            const auto dset = m_file.createDataSet(path, value);
         } else {
             // TODO check if a group
             DataSet dset = m_file.getDataSet(path);
@@ -112,6 +113,59 @@ public:
                 }
             }
         }
+    }
+
+    template <typename T>
+    void write(
+        const std::string &path,
+        const T &value,
+        const std::vector<Span> &window,
+        std::true_type) {
+
+        std::cout << "enum! " << path << std::endl;
+        if (!window.empty()) {
+            throw std::runtime_error("it doesn't make sense to specify a window for an enum");
+        }
+
+        if (!m_file.exist(path)) {
+            // TODO check if a group
+            //
+            // Register/commit the type if it doesn't already
+            // exist and use that.
+            const auto enum_type_name = type_name<T>();
+            // if (!m_group_types.exist(enum_type_name)) {
+            if (!m_file.exist(enum_type_name)) {
+                register_type<T>(enum_type_name);
+            }
+            // FIXME
+            const auto dset = m_file.createDataSet(
+                path,
+                DataSpace(1),
+                get_highfive_type_generating_function_enum<T>(enum_type_name)());
+        } else {
+            // TODO check if a group
+            // TODO this can be simplified for enums
+            DataSet dset = m_file.getDataSet(path);
+            const DataSpace dspace = dset.getSpace();
+            const std::vector<size_t> dims = dspace.getDimensions();
+            const std::vector<size_t> dims_max = dspace.getMaxDimensions();
+            const std::vector<size_t> dims_value = get_dims(value);
+            if (dims_value != dims) {
+                std::cout << " dims_value: " << dims_value << std::endl;
+                std::cout << " dims: " << dims << std::endl;
+                throw std::runtime_error("dims don't match");
+            } else {
+                dset.write(value);
+            }
+        }
+    }
+
+    template <typename T>
+    void write(
+        const std::string &path,
+        const T &value,
+        const std::vector<Span> &window = {}) {
+        return write(path, value, window, std::is_enum<T>{});
     }
 
     std::vector<std::string> get_paths() const noexcept {
@@ -144,6 +198,47 @@ private:
         }
     }
 
+    /** \brief Create a group if it doesn't already exist.
+     **/
+    Group create_or_get_group(const std::string &group_name) {
+        if (!m_file.exist(group_name)) {
+            return m_file.createGroup(group_name);
+        } else {
+            return m_file.getGroup(group_name);
+        }
+    }
+
+    const std::string m_name_group_types;
+    Group m_group_types;
+
+    template<typename T>
+    void register_type(const std::string &file_type_name) {
+        if (std::is_enum<T>::value) {
+            const auto highfive_type_generating_function = get_highfive_type_generating_function_enum<T>(file_type_name);
+            register_type(highfive_type_generating_function, file_type_name);
+        } else {
+            throw std::runtime_error("unknown type for registration");
+        }
+    }
+
+    // template<typename TGF>
+    // void register_type(TGF highfive_type_generating_function, const std::string &file_type_name) {
+    //     highfive_type_generating_function().commit(m_file, file_type_name);
+    // }
+    template<typename ET>
+    void register_type(
+        const std::function<EnumType<ET>()> &highfive_type_generating_function,
+        const std::string &file_type_name) {
+
+        highfive_type_generating_function().commit(m_file, file_type_name);
+    }
+
+    void register_type(
+        const std::function<CompoundType()> &highfive_type_generating_function,
+        const std::string &file_type_name) {
+
+        highfive_type_generating_function().commit(m_file, file_type_name);
+    }
 };
 
 #endif // INTERFACE_HPP_

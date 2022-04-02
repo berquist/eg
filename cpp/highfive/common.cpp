@@ -81,6 +81,25 @@ HighFive::EnumType<mecp_algorithm> create_enum_mecp_algorithm() {
             {"penalty_function", mecp_algorithm::penalty_function}};
 }
 
-// HIGHFIVE_REGISTER_TYPE(perturbation_type, create_enum_perturbation_type)
-// HIGHFIVE_REGISTER_TYPE(mecp_algorithm, create_enum_mecp_algorithm)
+HighFive::CompoundType create_compound_mecp_state() {
+    return HighFive::CompoundType(
+        {
+            {"spin", HighFive::AtomicType<bool>{}},
+            {"irrep", HighFive::AtomicType<size_t>{}},
+            {"state_within_irrep", HighFive::AtomicType<size_t>{}}
+        }
+        );
+}
 
+HighFive::CompoundType create_compound_rscf_orbitals_d_d() {
+    return HighFive::CompoundType(
+        {
+            {"nbsf", HighFive::AtomicType<size_t>{}},
+            {"nmo", HighFive::AtomicType<size_t>{}},
+            {"nocc", HighFive::AtomicType<size_t>{}},
+            {"c", HighFive::AtomicType<double>{}},
+            {"eigval", HighFive::AtomicType<double>{}},
+            {"objv", HighFive::AtomicType<double>{}}
+        }
+        );
+}

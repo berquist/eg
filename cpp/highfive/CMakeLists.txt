@@ -13,11 +13,17 @@ find_package(Armadillo REQUIRED)
 add_library(common common.cpp)
 target_link_libraries(common HighFive)
 
+add_library(iface iface.cpp)
+target_link_libraries(iface common)
+
 add_executable(highfive_enum.x enum.cpp)
-target_link_libraries(highfive_enum.x common)
+target_link_libraries(highfive_enum.x iface)
 
 add_executable(highfive_compound.x compound.cpp)
 target_link_libraries(highfive_compound.x common)
+
+add_executable(highfive_enum_compound_auto.x enum_compound_auto.cpp)
+target_link_libraries(highfive_enum_compound_auto.x iface)
 
 add_executable(arma_highfive.x arma.cpp)
 target_link_libraries(arma_highfive.x ${ARMADILLO_LIBRARIES} common)

@@ -1,54 +1,12 @@
-#include "common.hpp"
 #include "interface.hpp"
-#include "rscf_orbitals_mock.h"
 #include <highfive/H5DataType.hpp>
 #include <type_traits>
 
 using namespace HighFive;
 
-namespace libarchive {
-namespace impl {
-namespace schema {
-struct mecp_state {
-    bool spin;
-    size_t irrep;
-    size_t state_within_irrep;
-};
-} // namespace schema
-} // namespace impl
-} // namespace libarchive
-
-CompoundType create_compound_mecp_state() {
-    return CompoundType(
-        {
-            {"spin", AtomicType<bool>{}},
-            {"irrep", AtomicType<size_t>{}},
-            {"state_within_irrep", AtomicType<size_t>{}}
-        }
-        );
-}
-
+// TODO why can't these live in common.cpp?
 HIGHFIVE_REGISTER_TYPE(libarchive::impl::schema::mecp_state, create_compound_mecp_state)
-
-namespace libgscf {
-// template class rscf_orbitals<double, double>;
-typedef rscf_orbitals<double, double> rscf_orbitals_d_d;
-}
-
-CompoundType create_compound_rscf_orbitals_d_d() {
-    return CompoundType(
-        {
-            {"nbsf", AtomicType<size_t>{}},
-            {"nmo", AtomicType<size_t>{}},
-            {"nocc", AtomicType<size_t>{}},
-            {"c", AtomicType<double>{}},
-            {"eigval", AtomicType<double>{}},
-            {"objv", AtomicType<double>{}}
-        }
-        );
-}
-
-HIGHFIVE_REGISTER_TYPE(libgscf::rscf_orbitals_d_d, create_compound_rscf_orbitals_d_d);
+HIGHFIVE_REGISTER_TYPE(libgscf::rscf_orbitals_d_d, create_compound_rscf_orbitals_d_d)
 
 typedef struct {
     int m1;
@@ -103,7 +61,8 @@ int main() {
     }
 
     const std::string name_group_types(".types");
-    auto group_types = file.createGroup(name_group_types);
+    // auto group_types = file.createGroup(name_group_types);
+    auto group_types = file.getGroup(name_group_types);
 
     const auto h5_mecp_state = create_compound_mecp_state();
     const auto type_name = std::string("mecp_state");
@@ -122,6 +81,16 @@ int main() {
     // auto dset_orbs = file.createDataSet("orbs", orbs);
     auto dset_orbs = file.createDataSet("orbs", DataSpace(orbs.size()), h5_rscf_orbitals_d_d);
     dset_orbs.write(orbs);
+
+    constexpr auto e1 = perturbation_type::magnetic;
+    constexpr auto e2 = mecp_algorithm::penalty_function;
+
+    std::cout << "std::is_enum<decltype(e1)> = " << std::is_enum<decltype(e1)>::value << std::endl;
+    std::cout << "std::is_enum<decltype(e2)> = " << std::is_enum<decltype(e2)>::value << std::endl;
+    std::cout << "std::is_compound<decltype(e1)> = " << std::is_compound<decltype(e1)>::value << std::endl;
+    std::cout << "std::is_compound<decltype(e2)> = " << std::is_compound<decltype(e2)>::value << std::endl;
+    std::cout << "std::is_object<decltype(e1)> = " << std::is_object<decltype(e1)>::value << std::endl;
+    std::cout << "std::is_object<decltype(e2)> = " << std::is_object<decltype(e2)>::value << std::endl;
 
     std::cout << "std::is_enum<perturbation_type> = " << std::is_enum<perturbation_type>::value << std::endl;
     std::cout << "std::is_enum<mecp_algorithm> = " << std::is_enum<mecp_algorithm>::value << std::endl;
