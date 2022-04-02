@@ -22,7 +22,7 @@ typedef std::pair<indices, indices> pair_indices;
 inline pair_indices spans_to_offsets_and_counts(const std::vector<Span> &spans) {
     indices offsets;
     indices counts;
-    for (auto span : spans) {
+    for (const Span &span : spans) {
         offsets.push_back(span.start);
         // stop is inclusive
         counts.push_back(span.stop - span.start + 1);
@@ -90,7 +90,7 @@ public:
                 throw std::runtime_error("it doesn't make sense to specify writing a subset to a nonexistent entry");
             }
             // TODO check if a group
-            const auto dset = m_file.createDataSet(path, value);
+            const DataSet dset = m_file.createDataSet(path, value);
         } else {
             // TODO check if a group
             DataSet dset = m_file.getDataSet(path);
@@ -132,16 +132,17 @@ public:
             //
             // Register/commit the type if it doesn't already
             // exist and use that.
-            const auto enum_type_name = type_name<T>();
+            const std::string enum_type_name = type_name<T>();
+            const std::function<EnumType<T>()> highfive_tgf = get_highfive_type_generating_function_enum<T>(enum_type_name);
+            const EnumType<T> dtype = highfive_tgf();
             // if (!m_group_types.exist(enum_type_name)) {
             if (!m_file.exist(enum_type_name)) {
-                register_type<T>(enum_type_name);
+                // register_type<T>(dtype, enum_type_name);
+                dtype.commit(m_file, enum_type_name);
             }
             // FIXME
-            const auto dset = m_file.createDataSet(
-                path,
-                DataSpace(1),
-                get_highfive_type_generating_function_enum<T>(enum_type_name)());
+            DataSet dset = m_file.createDataSet(path, DataSpace(1), dtype);
+            dset.write(value);
         } else {
             // TODO check if a group
             // TODO this can be simplified for enums
@@ -211,6 +212,7 @@ private:
     const std::string m_name_group_types;
     Group m_group_types;
 
+#if 0
     template<typename T>
     void register_type(const std::string &file_type_name) {
         if (std::is_enum<T>::value) {
@@ -238,6 +240,15 @@ private:
         const std::string &file_type_name) {
 
         highfive_type_generating_function().commit(m_file, file_type_name);
+    }
+#endif
+
+    template<typename T>
+    void register_type(
+        const EnumType<T> &dtype,
+        const std::string &file_type_name) {
+
+        dtype.commit(m_file, file_type_name);
     }
 };
 
