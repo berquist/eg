@@ -84,7 +84,6 @@ public:
         const std::vector<Span> &window,
         std::false_type) {
 
-        std::cout << "not an enum! " << path << std::endl;
         if (!m_file.exist(path)) {
             if (!window.empty()) {
                 throw std::runtime_error("it doesn't make sense to specify writing a subset to a nonexistent entry");
@@ -122,7 +121,6 @@ public:
         const std::vector<Span> &window,
         std::true_type) {
 
-        std::cout << "enum! " << path << std::endl;
         if (!window.empty()) {
             throw std::runtime_error("it doesn't make sense to specify a window for an enum");
         }
@@ -135,9 +133,7 @@ public:
             const std::string enum_type_name = type_name<T>();
             const std::function<EnumType<T>()> highfive_tgf = get_highfive_type_generating_function_enum<T>(enum_type_name);
             const EnumType<T> dtype = highfive_tgf();
-            // if (!m_group_types.exist(enum_type_name)) {
             if (!m_file.exist(enum_type_name)) {
-                // register_type<T>(dtype, enum_type_name);
                 dtype.commit(m_file, enum_type_name);
             }
             // FIXME
