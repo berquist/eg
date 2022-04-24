@@ -10,3 +10,10 @@ endif(HDF5_FOUND)
 if(GSL_FOUND)
     add_subdirectory(test_libgsl)
 endif(GSL_FOUND)
+
+add_executable(complex_example_99.x complex_example_99.c)
+set_target_properties(complex_example_99.x
+    PROPERTIES
+    C_STANDARD 99
+    C_STANDARD_REQUIRED TRUE)
+target_link_libraries(complex_example_99.x m)
