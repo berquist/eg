@@ -1,5 +1,7 @@
 #include "common.hpp"
 #include "interface.hpp"
+#include <highfive/H5DataType.hpp>
+#include "complex.hpp"
 
 using namespace HighFive;
 
@@ -18,9 +20,11 @@ int main() {
     const double n1_ = 1.23;
     const int n2_ = 4;
     const size_t n3_ = size_t(4);
+    const std::complex<double> n4_ {2.0, 3.2};
     iface.write("/nums/n1", n1_);
     iface.write("/nums/n2", n2_);
     iface.write("/nums/n3", n3_);
+    iface.write("/nums/n4", n4_);
     // DataSet dset_double = file.createDataSet("/nums/n1", 1.23);
     // DataSet dset_int = file.createDataSet("/nums/n2", 4);
     // DataSet dset_sizet = file.createDataSet("/nums/n3", size_t(4));
@@ -51,6 +55,11 @@ int main() {
     std::cout << "dspace_double.getDimensions: " << dspace_double.getDimensions() << std::endl;
     std::cout << "dspace_string.getMaxDimensions: " << dspace_string.getMaxDimensions() << std::endl;
     std::cout << "dspace_double.getMaxDimensions: " << dspace_double.getMaxDimensions() << std::endl;
+
+    // auto dtype = create_and_check_datatype<std::complex<double>>();
+    // auto dspace = DataSpace(1);
+    // auto dset = file.createDataSet("/nums/n4", dspace, dtype);
+    // dset.write(n4_);
 
     return 0;
 }
