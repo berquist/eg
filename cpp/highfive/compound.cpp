@@ -1,3 +1,4 @@
+#include "common.hpp"
 #include "interface.hpp"
 #include <highfive/H5DataType.hpp>
 #include "highfive_arma.hpp"
@@ -5,8 +6,6 @@
 using namespace HighFive;
 
 namespace libstore {
-
-namespace {
 
 template<typename T>
 struct inner_type
@@ -25,9 +24,6 @@ struct inner_type<E<Head, Tail...>>
 {
     using type = Head;
 };
-
-} // unnamed namespace
-
 
 template <typename T>
 DataType get_dtype(const T &val) {
@@ -73,6 +69,17 @@ CompoundType create_compound_csl2() {
 HIGHFIVE_REGISTER_TYPE(CSL1, create_compound_csl1)
 HIGHFIVE_REGISTER_TYPE(CSL2, create_compound_csl2)
 
+template<typename T>
+struct is_custom {
+    using TI = typename libstore::inner_type<T>::type;
+    static constexpr bool value = std::is_compound<TI>::value && !(std::is_enum<T>::value);
+};
+
+template<typename T>
+struct is_custom<std::complex<T>> {
+    static constexpr bool value = false;
+};
+
 int main() {
     const std::string filename("compound.h5");
     File file(filename, File::ReadWrite | File::Create | File::Truncate);
@@ -101,10 +108,10 @@ int main() {
     auto group_types = file.getGroup(name_group_types);
 
     const auto h5_mecp_state = create_compound_mecp_state();
-    const auto type_name = std::string("mecp_state");
-    std::cout << group_types.exist(type_name) << std::endl;
-    h5_mecp_state.commit(group_types, type_name);
-    std::cout << group_types.exist(type_name) << std::endl;
+    const auto mecp_state_type_name = std::string("mecp_state");
+    std::cout << group_types.exist(mecp_state_type_name) << std::endl;
+    h5_mecp_state.commit(group_types, mecp_state_type_name);
+    std::cout << group_types.exist(mecp_state_type_name) << std::endl;
     // Have to write a vector, not a single instance...
     // const auto s1 = libarchive::impl::schema::mecp_state {true, 2, 1};
     const std::vector<libarchive::impl::schema::mecp_state> s1 = {{true, 2, 1}};
@@ -122,6 +129,7 @@ int main() {
     constexpr auto e2 = mecp_algorithm::penalty_function;
     const arma::vec v1(4, arma::fill::randn);
     const std::complex<double> c1(2.0, 3.2);
+    const std::vector<int> v2 {4, 5, 6};
 
     std::cout << "std::is_floating_point<std::complex<double>> = " << std::is_floating_point<std::complex<double>>::value << std::endl;
     std::cout << "std::is_floating_point<arma::vec> = " << std::is_floating_point<arma::vec>::value << std::endl;
@@ -170,6 +178,31 @@ int main() {
     std::cout << "get_dtype(perturbation_type) = " << libstore::get_dtype(e1) << std::endl;
     std::cout << "get_dtype(mecp_algorithm) = " << libstore::get_dtype(e2) << std::endl;
     std::cout << "get_dtype(libarchive::impl::schema::mecp_state) = " << libstore::get_dtype(s1[0]) << std::endl;
+
+    // decltype not working?
+    // std::cout << "[inner] type_name(std::complex<double>) = " << type_name<libstore::inner_type<decltype(c1)>::type>() << std::endl;
+    // std::cout << "[inner] type_name(arma::vec) = " << type_name<libstore::inner_type<decltype(v1)>::type>() << std::endl;
+    // std::cout << "[inner] type_name(std::vector<int>) = " << type_name<libstore::inner_type<decltype(v2)>::type>() << std::endl;
+    // std::cout << "[inner] type_name(perturbation_type) = " << type_name<libstore::inner_type<decltype(e1)>::type>() << std::endl;
+    // std::cout << "[inner] type_name(mecp_algorithm) = " << type_name<libstore::inner_type<decltype(e2)>::type>() << std::endl;
+    // std::cout << "[inner] type_name(libarchive::impl::schema::mecp_state) = " << type_name<libstore::inner_type<decltype(s1[0])>::type>() << std::endl;
+    // std::cout << "[inner] type_name(std::vector<libarchive::impl::schema::mecp_state>) = " << type_name<libstore::inner_type<decltype(s1)>::type>() << std::endl;
+
+    std::cout << "[inner] type_name(std::complex<double>) = " << type_name<libstore::inner_type<std::complex<double>>::type>() << std::endl;
+    std::cout << "[inner] type_name(arma::vec) = " << type_name<libstore::inner_type<arma::vec>::type>() << std::endl;
+    std::cout << "[inner] type_name(std::vector<int>) = " << type_name<libstore::inner_type<std::vector<int>>::type>() << std::endl;
+    std::cout << "[inner] type_name(perturbation_type) = " << type_name<libstore::inner_type<perturbation_type>::type>() << std::endl;
+    std::cout << "[inner] type_name(mecp_algorithm) = " << type_name<libstore::inner_type<mecp_algorithm>::type>() << std::endl;
+    std::cout << "[inner] type_name(libarchive::impl::schema::mecp_state) = " << type_name<libstore::inner_type<libarchive::impl::schema::mecp_state>::type>() << std::endl;
+    std::cout << "[inner] type_name(std::vector<libarchive::impl::schema::mecp_state>) = " << type_name<libstore::inner_type<std::vector<libarchive::impl::schema::mecp_state>>::type>() << std::endl;
+
+    std::cout << "is_custom(std::complex<double>) = " << is_custom<std::complex<double>>::value << std::endl;
+    std::cout << "is_custom(arma::vec) = " << is_custom<arma::vec>::value << std::endl;
+    std::cout << "is_custom(std::vector<int>) = " << is_custom<std::vector<int>>::value << std::endl;
+    std::cout << "is_custom(perturbation_type) = " << is_custom<perturbation_type>::value << std::endl;
+    std::cout << "is_custom(mecp_algorithm) = " << is_custom<mecp_algorithm>::value << std::endl;
+    std::cout << "is_custom(libarchive::impl::schema::mecp_state) = " << is_custom<libarchive::impl::schema::mecp_state>::value << std::endl;
+    std::cout << "is_custom(std::vector<libarchive::impl::schema::mecp_state>) = " << is_custom<std::vector<libarchive::impl::schema::mecp_state>>::value << std::endl;
 
     iface.write("s1_2", s1);
     iface.write("orbs_2", orbs);

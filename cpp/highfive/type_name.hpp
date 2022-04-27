@@ -1,3 +1,6 @@
+#ifndef TYPE_NAME_HPP_
+#define TYPE_NAME_HPP_
+
 // This block taken from https://stackoverflow.com/a/20170989, just the C++11
 // part.
 #include <type_traits>
@@ -36,3 +39,5 @@ type_name()
     //     r += "&&";
     return r;
 }
+
+#endif // TYPE_NAME_HPP_

@@ -20,7 +20,7 @@ add_executable(highfive_enum.x enum.cpp)
 target_link_libraries(highfive_enum.x iface)
 
 add_executable(highfive_compound.x compound.cpp)
-target_link_libraries(highfive_compound.x common ${ARMADILLO_LIBRARIES})
+target_link_libraries(highfive_compound.x iface ${ARMADILLO_LIBRARIES})
 
 add_executable(highfive_enum_compound_auto.x enum_compound_auto.cpp)
 target_link_libraries(highfive_enum_compound_auto.x iface)
