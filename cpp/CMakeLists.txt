@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(eg C CXX)
 
 set(SRC
+    destructor_chain
     int_size_t_comparison
     return_const_reference
     string_conversion
