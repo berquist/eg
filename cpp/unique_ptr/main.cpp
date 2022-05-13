@@ -1,5 +1,4 @@
 #include <cstdio>
-#include <memory>
 #include "dummy.hpp"
 
 std::unique_ptr<Dummy> make_dummy() {

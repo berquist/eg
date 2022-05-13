@@ -9,6 +9,26 @@ struct A {
         std::cout<< "[~A] " << m_name << std::endl;
     }
     std::string m_name;
+    // struct A_inner {
+    //     A_inner(const std::string &name) : m_name(name) {
+    //         std::cout<< "[A_inner] " << m_name << std::endl;
+    //     }
+    //     ~A_inner() {
+    //         std::cout<< "[~A_inner] " << m_name << std::endl;
+    //     }
+    //     std::string m_name;
+    // } A_inner_inst("global");
+    struct A_inner {
+        A_inner() {
+            std::string m_name("fixed");
+            std::cout<< "[A_inner] " << m_name << std::endl;
+        }
+        ~A_inner() {
+            std::string m_name("fixed");
+            std::cout<< "[~A_inner] " << m_name << std::endl;
+        }
+        std::string m_name;
+    } A_inner_inst;
 };
 
 struct B {
