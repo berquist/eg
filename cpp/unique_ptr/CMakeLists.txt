@@ -8,6 +8,8 @@ target_compile_features(${TGT} PRIVATE cxx_std_14)
 
 set(SRC
     smart_ptr_destructors
+    smart_ptr_push_pop
+    smart_ptr_push_pop_2
     # smart_ptr_temporary
     )
 
