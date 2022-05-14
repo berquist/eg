@@ -5,6 +5,7 @@ set(SRC
     destructor_chain
     int_size_t_comparison
     return_const_reference
+    stl
     string_conversion
     test_getenv
     test_openmp_2
