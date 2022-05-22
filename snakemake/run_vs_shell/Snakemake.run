@@ -1,5 +1,11 @@
 # -*- mode: snakemake -*-
 
 rule all:
+    output:
+        "stringfile2.txt"
     run:
-        print("hello, world!")
+        p = "foo/bar.txt"
+        if os.path.exists(p):
+            shell("cp -a {p} {output}")
+        else:
+            pass
