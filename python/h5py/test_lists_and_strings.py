@@ -18,3 +18,9 @@ print(dset_l1[()])
 
 l2 = ["apple", "pear", "banana"]
 h5file["l2"] = l2
+
+s1 = "hello world"
+h5file["s1"] = s1
+s2 = "how are you"
+# "scalar datasets cannot be extended"
+# dset_s2 = h5file.create_dataset("s2", data=s2, maxshape=(None,))
