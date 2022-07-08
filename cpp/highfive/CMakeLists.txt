@@ -28,6 +28,9 @@ target_link_libraries(highfive_enum_compound_auto.x iface)
 add_executable(arma_highfive.x arma.cpp)
 target_link_libraries(arma_highfive.x ${ARMADILLO_LIBRARIES} common)
 
+add_executable(highfive_arma_chunking.x arma_chunking.cpp)
+target_link_libraries(highfive_arma_chunking.x ${ARMADILLO_LIBRARIES} common)
+
 # add_executable(aview.x aview.cpp)
 # target_link_libraries(aview.x aview HighFive ${ARMADILLO_LIBRARIES})
 

@@ -4,8 +4,7 @@
 
 using namespace HighFive;
 
-/** Write a STL vector of Armadillo matrices with the STL vector index as the first index.
- *
+/** \brief Write a STL vector of Armadillo matrices with the STL vector index as the first index.
  */
 template <typename T>
 void write(File &file, const std::string &name, const std::vector<arma::Mat<T>> &vec) {
@@ -27,8 +26,7 @@ void write(File &file, const std::string &name, const std::vector<arma::Mat<T>> 
     }
 }
 
-/** Write a STL vector of Armadillo cubes with the STL vector index as the first index.
- *
+/** \brief Write a STL vector of Armadillo cubes with the STL vector index as the first index.
  */
 template <typename T>
 void write(File &file, const std::string &name, const std::vector<arma::Cube<T>> &vec) {
