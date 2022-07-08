@@ -10,42 +10,42 @@ find_package(Armadillo REQUIRED)
 # blergh...
 # include_directories(libaview)
 
-add_library(common common.cpp)
-target_link_libraries(common HighFive)
+add_library(highfive_common common.cpp)
+target_link_libraries(highfive_common HighFive)
 
-add_library(iface iface.cpp)
-target_link_libraries(iface common)
+add_library(highfive_iface iface.cpp)
+target_link_libraries(highfive_iface highfive_common)
 
 add_executable(highfive_enum.x enum.cpp)
-target_link_libraries(highfive_enum.x iface)
+target_link_libraries(highfive_enum.x highfive_iface)
 
 add_executable(highfive_compound.x compound.cpp)
-target_link_libraries(highfive_compound.x iface ${ARMADILLO_LIBRARIES})
+target_link_libraries(highfive_compound.x highfive_iface ${ARMADILLO_LIBRARIES})
 
 add_executable(highfive_enum_compound_auto.x enum_compound_auto.cpp)
-target_link_libraries(highfive_enum_compound_auto.x iface)
+target_link_libraries(highfive_enum_compound_auto.x highfive_iface)
 
-add_executable(arma_highfive.x arma.cpp)
-target_link_libraries(arma_highfive.x ${ARMADILLO_LIBRARIES} common)
+add_executable(highfive_arma.x arma.cpp)
+target_link_libraries(highfive_arma.x ${ARMADILLO_LIBRARIES} highfive_common)
 
 add_executable(highfive_arma_chunking.x arma_chunking.cpp)
-target_link_libraries(highfive_arma_chunking.x ${ARMADILLO_LIBRARIES} common)
+target_link_libraries(highfive_arma_chunking.x ${ARMADILLO_LIBRARIES} highfive_common)
 
-# add_executable(aview.x aview.cpp)
-# target_link_libraries(aview.x aview HighFive ${ARMADILLO_LIBRARIES})
+# add_executable(highfive_aview.x aview.cpp)
+# target_link_libraries(highfive_aview.x aview HighFive ${ARMADILLO_LIBRARIES})
 
-# add_executable(eigen.x eigen.cpp)
-# target_link_libraries(eigen.x HighFive)
+# add_executable(highfive_eigen.x eigen.cpp)
+# target_link_libraries(highfive_eigen.x HighFive)
 
-# add_executable(stl.x stl.cpp)
-# target_link_libraries(stl.x HighFive Armadillo)
+# add_executable(highfive_stl.x stl.cpp)
+# target_link_libraries(highfive_stl.x HighFive Armadillo)
 
-add_executable(pod.x pod.cpp)
-target_link_libraries(pod.x common)
+add_executable(highfive_pod.x pod.cpp)
+target_link_libraries(highfive_pod.x highfive_common)
 
 enable_testing()
 find_package(GTest)
 
-add_executable(test_span.x test_span.cpp)
-target_link_libraries(test_span.x ${GTEST_BOTH_LIBRARIES})
-add_test(test_span test_span.x)
+add_executable(highfive_test_span.x test_span.cpp)
+target_link_libraries(highfive_test_span.x ${GTEST_BOTH_LIBRARIES})
+add_test(highfive_test_span highfive_test_span.x)

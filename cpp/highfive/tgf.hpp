@@ -1,6 +1,7 @@
 #ifndef TGF_HPP_
 #define TGF_HPP_
 
+#include <functional>
 #include <highfive/H5DataType.hpp>
 
 template<typename T>
