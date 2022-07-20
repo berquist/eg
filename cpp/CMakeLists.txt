@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.0)
 project(eg C CXX)
 
 set(SRC
-    alphanum
     # complex_example
     destructor_chain
     int_size_t_comparison
@@ -22,6 +21,9 @@ message(STATUS "SRC: ${SRC}")
 foreach(file ${SRC})
     add_executable(${file}.x ${file}.cpp)
 endforeach(file)
+
+add_executable(alphanum.x alphanum.cpp)
+set_target_properties(alphanum.x PROPERTIES CXX_STANDARD 11)
 
 find_package(Armadillo)
 find_package(cereal)

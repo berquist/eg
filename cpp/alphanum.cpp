@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include "alphanum.hpp"
 #include <algorithm>
 #include <iostream>
