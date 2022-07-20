@@ -49,3 +49,6 @@ find_package(GTest)
 add_executable(highfive_test_span.x test_span.cpp)
 target_link_libraries(highfive_test_span.x ${GTEST_BOTH_LIBRARIES})
 add_test(highfive_test_span highfive_test_span.x)
+
+add_executable(highfive_dtype.x dtype.cpp)
+target_link_libraries(highfive_dtype.x HighFive)
