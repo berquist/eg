@@ -5,6 +5,8 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <cstring>
+
 int main()
 {
     // testcases for the algorithm
