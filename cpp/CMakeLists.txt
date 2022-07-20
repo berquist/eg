@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.0)
 project(eg C CXX)
 
 set(SRC
+    # complex_example
     destructor_chain
     int_size_t_comparison
     return_const_reference
     stl
     string_conversion
+    # test_function
     test_getenv
     test_openmp_2
     test_openmp_copyprivate
