@@ -1,4 +1,13 @@
 project(EG_DOXYGEN CXX)
 cmake_minimum_required(VERSION 3.0)
 
-find_package(Doxygen REQUIRED 1.9)
+find_package(Doxygen 1.9 REQUIRED)
+
+add_executable(alphanum_test.x alphanum_test.C)
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile" @ONLY)
+add_custom_target(alphanum_docs
+    "${DOXYGEN_EXECUTABLE}" "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    COMMENT "Doxygen documentation" VERBATIM)
