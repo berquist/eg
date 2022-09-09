@@ -10,6 +10,7 @@ set(SRC
     string_conversion
     # test_function
     test_getenv
+    test_lambda
     test_openmp_2
     test_openmp_copyprivate
     test_openmp
