@@ -1,5 +1,5 @@
-import numpy as np
 import h5py
+import numpy as np
 
 FNAME_NO = "big_swmr_no.h5"
 FNAME_YES = "big_swmr_yes.h5"

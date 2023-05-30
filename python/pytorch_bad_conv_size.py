@@ -1,4 +1,5 @@
 import torch
+
 layer = torch.nn.Conv1d(16, 100, kernel_size=(5,), stride=(1,))
 input_ok = torch.randn(294, 16, 7)
 input_bad = torch.randn(470, 16, 4)

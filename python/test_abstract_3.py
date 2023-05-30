@@ -1,6 +1,7 @@
-import six
 from abc import ABC, ABCMeta, abstractmethod
 from inspect import isabstract
+
+import six
 
 
 class Foo(object):

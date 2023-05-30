@@ -1,13 +1,10 @@
 from pprint import pprint
 
 import numpy as np
-
+from keras.layers import Dense, Input, Masking, TimeDistributed
 from keras.models import Model
-from keras.layers import Activation, Dense, Input, Masking, TimeDistributed
-
 
 if __name__ == "__main__":
-
     inp = Input(shape=(3, 6))
     mask = Masking(mask_value=0.1)(inp)
     out = TimeDistributed(Dense(1, activation="linear"))(mask)

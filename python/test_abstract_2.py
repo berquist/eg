@@ -1,9 +1,11 @@
 from __future__ import print_function
-import pytest
-import six
+
 import sys
 from abc import ABCMeta, abstractmethod
 from inspect import isabstract
+
+import pytest
+import six
 
 
 class Foo(object):

@@ -1,6 +1,5 @@
 import h5py
 
-
 FNAME = "lists_and_strings.h5"
 
 h5file = h5py.File(FNAME, mode="w", libver="latest")
