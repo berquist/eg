@@ -2,38 +2,38 @@ from typing import Callable
 
 import pytest
 
+# def skip_for_parser(parser: str, msg: str):
+#     """Return a decorator that skips the test for specified parser."""
 
-def skipForParser(parser, msg: str):
-    """Return a decorator that skips the test for specified parser."""
+#     def testdecorator(testfunc: Callable) -> Callable[[], None]:
+#         def testwrapper(self, *args, **kwargs) -> None:
+#             if self.logfile.logname == parser:
+#                 self.skipTest(msg)
+#             else:
+#                 testfunc(self, *args, **kwargs)
 
-    def testdecorator(testfunc):
-        def testwrapper(self, *args, **kwargs):
-            if self.logfile.logname == parser:
-                self.skipTest(msg)
-            else:
-                testfunc(self, *args, **kwargs)
+#         return testwrapper
 
-        return testwrapper
-
-    return testdecorator
+#     return testdecorator
 
 
-def skipForLogfile(fragment, msg: str):
-    """Return a decorator that skips the test for logfiles containing fragment."""
+# def skip_for_logfile(fragment: str, msg: str):
+#     """Return a decorator that skips the test for logfiles containing fragment.
+#     """
 
-    def testdecorator(testfunc):
-        def testwrapper(self, *args, **kwargs):
-            # self.logfile.filename may be a string or list of strings.
-            if fragment in self.logfile.filename or any(
-                fragment in filename for filename in self.logfile.filename
-            ):
-                self.skipTest(msg)
-            else:
-                testfunc(self, *args, **kwargs)
+#     def testdecorator(testfunc: Callable) -> Callable[[], None]:
+#         def testwrapper(self, *args, **kwargs) -> None:
+#             # self.logfile.filename may be a string or list of strings.
+#             if fragment in self.logfile.filename or any(
+#                 fragment in filename for filename in self.logfile.filename
+#             ):
+#                 self.skipTest(msg)
+#             else:
+#                 testfunc(self, *args, **kwargs)
 
-        return testwrapper
+#         return testwrapper
 
-    return testdecorator
+#     return testdecorator
 
 
 def test_normal() -> None:
@@ -41,7 +41,7 @@ def test_normal() -> None:
     print("This is my normal test.")
 
 
-def nothing(fragment):
+def nothing(_: Callable[[], None]) -> Callable[[], None]:
     """A test decorator that doesn't do anything.
 
     The TODO is called at test collection time.
@@ -52,7 +52,7 @@ def nothing(fragment):
     #     return testwrapper
     print("Inside nothing before testdecorator definition")
 
-    def testdecorator():
+    def testdecorator() -> None:
         print("Inside testdecorator")
         # /usr/lib/python3.11/site-packages/_pytest/python.py:198:
         # PytestReturnNotNoneWarning: Expected None, but
@@ -67,17 +67,30 @@ def nothing(fragment):
     return testdecorator
 
 
-def skip_on_function_name(fragment: Callable):
+def skip_on_function_name(testfunc: Callable[[], None]) -> Callable[[], None]:
+    """A decorator that skips a test when its name contains 'skip_2'."""
     print("@before")
 
-    def testdecorator():
+    def testdecorator() -> None:
         print("@inside")
-        if "skip_2" in fragment.__name__:
-            # breakpoint()
+        if "skip_2" in testfunc.__name__:
             print("@skipped")
             pytest.skip(reason="matched!")
 
     print("@after")
+    return testdecorator
+
+
+def skip_on_function_name2(name: str) -> Callable[[Callable[[], None]], Callable[[], None]]:
+    """A decorator that skips a test when its name contains 'name'."""
+
+    def testdecorator(testfunc: Callable[[], None]) -> Callable[[], None]:
+        def testwrapper() -> None:
+            if name in testfunc.__name__:
+                pytest.skip(reason=f"matched '{name}'!")
+
+        return testwrapper
+
     return testdecorator
 
 
@@ -95,3 +108,13 @@ def test_decorated_skip_1() -> None:
 @skip_on_function_name
 def test_decorated_skip_2() -> None:
     """test_decorated_skip_1 will match"""
+
+
+@skip_on_function_name2("yes")
+def test_no() -> None:
+    pass
+
+
+@skip_on_function_name2("yes")
+def test_yes() -> None:
+    pass
