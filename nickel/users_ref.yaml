@@ -1,0 +1,9 @@
+---
+users:
+  - name: Aisha
+    is-admin: true
+    ssh-keys:
+      - AAAAApqCA8oKAB5S/47f...... aisha@work
+  - name: Violet
+    extra-groups:
+      - accounting
