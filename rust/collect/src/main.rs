@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 const DEFAULT_IGNORES: [&str; 8] = [
     "RCS",
     "CVS",
@@ -19,4 +21,9 @@ fn main() {
     println!("{:?}", ignores_vec);
     let ignores_vec: Vec<_> = DEFAULT_IGNORES.iter().map(|&x| String::from(x)).collect();
     println!("{:?}", ignores_vec);
+
+    let paths_vec: Vec<_> = DEFAULT_IGNORES.iter().map(|x| PathBuf::from(*x)).collect();
+    println!("{:?}", paths_vec);
+    let paths_vec: Vec<_> = DEFAULT_IGNORES.iter().map(|&x| PathBuf::from(x)).collect();
+    println!("{:?}", paths_vec);
 }
