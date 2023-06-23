@@ -1,10 +1,11 @@
 build/
+build_autotools/
+build_cmake/
 install/
 
 # autotools
 Makefile.in
 aclocal.m4
-autogen.sh
 autom4te.cache/
 compile
 configure
