@@ -1,0 +1,14 @@
+autotools:
+    -rm -r build_autotools
+    ./autogen.sh
+    mkdir build_autotools && cd build_autotools && ../configure && make
+    ./build_autotools/helloworld
+
+cmake:
+    -rm -r build_cmake
+    cmake -Bbuild_cmake -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+    cd build_cmake && ninja
+    ./build_cmake/autoconf_earthly.x
+
+clean:
+    git clean -xdf .
