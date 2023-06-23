@@ -1,0 +1,20 @@
+build/
+install/
+
+# autotools
+Makefile.in
+aclocal.m4
+autogen.sh
+autom4te.cache/
+compile
+configure
+depcomp
+install-sh
+missing
+
+# after configure
+.deps/
+Makefile
+config.status
+
+helloworld
