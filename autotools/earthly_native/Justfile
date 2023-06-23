@@ -1,0 +1,18 @@
+build_autotools := justfile_directory() / "build_autotools"
+build_cmake := justfile_directory() / "build_cmake"
+
+autotools:
+    -rm -r {{build_autotools}}
+    {{justfile_directory()}}/autogen.sh
+    mkdir {{build_autotools}} && cd {{build_autotools}} && {{justfile_directory()}}/configure && make
+    {{build_autotools}}/helloworld
+
+cmake:
+    -rm -r {{build_cmake}}
+    cmake -B{{build_cmake}} -S {{justfile_directory()}} -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+    cd {{build_cmake}} && ninja
+    {{build_cmake}}/autoconf_earthly.x
+
+clean:
+    # TODO justfile_directory()?
+    git clean -xdf .
