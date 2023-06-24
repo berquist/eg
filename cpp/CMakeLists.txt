@@ -5,6 +5,7 @@ set(SRC
     # complex_example
     destructor_chain
     int_size_t_comparison
+    mod
     return_const_reference
     stl
     string_conversion
