@@ -8,6 +8,7 @@ set(SRC_ARMA
     arma_diag
     arma_eye
     arma_fancy_indexing
+    arma_resize
     arma_sum
     arma_test_mask_index
     arma_test_save
