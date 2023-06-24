@@ -19,5 +19,11 @@ int main() {
 
     DataSet dset_m1 = file.createDataSet("m", m1);
 
+    Eigen::VectorXd A = 100. * Eigen::VectorXd::Random(20);
+    Eigen::VectorXi B = A.cast<int>();
+
+    auto dset_A = file.createDataSet("A", A);
+    auto dset_B = file.createDataSet("B", B);
+
     return 0;
 }
