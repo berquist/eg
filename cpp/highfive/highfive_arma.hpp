@@ -15,11 +15,11 @@ struct inspector<arma::Col<T>> {
     using value_type = T;
     using base_type = typename inspector<value_type>::base_type;
 
-    static const size_t ndim = 2;
+    static const size_t ndim = 1;
     static const size_t recursive_ndim = ndim + inspector<value_type>::recursive_ndim;
 
     static std::array<size_t, recursive_ndim> getDimensions(const type &val) {
-        std::array<size_t, recursive_ndim> sizes{val.n_elem, 1};
+        std::array<size_t, recursive_ndim> sizes{val.n_elem,};
         return sizes;
     }
 };
@@ -35,8 +35,7 @@ struct data_converter<arma::Col<T>>
         : container_converter<container_type>(space), _space(space) {
 
         const std::vector<size_t> dims = _space.getDimensions();
-        assert(dims.size() == 2);
-        assert(dims[1] == 1);
+        assert(dims.size() == 1);
     }
 
     inline value_type * transform_read(container_type &container) {
@@ -60,11 +59,11 @@ struct inspector<arma::Row<T>> {
     using value_type = T;
     using base_type = typename inspector<value_type>::base_type;
 
-    static const size_t ndim = 2;
+    static const size_t ndim = 1;
     static const size_t recursive_ndim = ndim + inspector<value_type>::recursive_ndim;
 
     static std::array<size_t, recursive_ndim> getDimensions(const type &val) {
-        std::array<size_t, recursive_ndim> sizes{1, val.n_elem};
+        std::array<size_t, recursive_ndim> sizes{val.n_elem,};
         return sizes;
     }
 };
@@ -80,8 +79,7 @@ struct data_converter<arma::Row<T>>
         : container_converter<container_type>(space), _space(space) {
 
         const std::vector<size_t> dims = _space.getDimensions();
-        assert(dims.size() == 2);
-        assert(dims[0] == 1);
+        assert(dims.size() == 1);
     }
 
     inline value_type * transform_read(container_type &container) {
