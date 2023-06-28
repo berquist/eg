@@ -1,0 +1,3 @@
+all:
+    # https://plan9.io/7thEdMan/v7vol2b.pdf
+    m4 manual.m4 # > manual.m4.out

@@ -1,0 +1,8 @@
+* The autotools ecosystem: m4, autoconf
+
+** Links
+
+*** m4
+- [[https://en.wikipedia.org/wiki/M4_(computer_language)][Wikipedia]]
+- [[https://jameshoward.us/2021/08/03/working-with-m4-macro-language][Working with the m4 Macro Language]]
+- [[https://plan9.io/7thEdMan/v7vol2b.pdf][UNIX Programmer's Manual, Seventh Edition, Volume 2B, January, 1979]]
