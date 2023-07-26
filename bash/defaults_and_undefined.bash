@@ -5,6 +5,8 @@ _MOCK_HASH_MASTER="25c27ad3f3da0013e5aa2b7ee407cf075e1b36aa"
 _MOCK_HASH_MACRO="macrohash"
 
 branch_to_commit_hash() {
+    # This is a mock implementation.
+    # The real one does $(git log -n 1 "${branch}" | grep commit | cut -d ' ' -f 2)
     local branch="${1}"
     if [[ "${branch}" == "devel" ]]; then
         echo "${_MOCK_HASH_DEVEL}"
@@ -22,10 +24,11 @@ get_commit_hash() {
     # A default branch *must* be specified.
     # The commit hash and specific branch are optional.
 
+    # non-zero length?
     # branch no hash no -> default branch to hash
     # branch no hash yes -> use hash as-is
     # branch yes hash no -> specific branch to hash
-    # branch yes hash yes -> exit 1
+    # branch yes hash yes -> return 1
 
     local branch_specified="${1}"
     local branch_default="${2}"
@@ -49,6 +52,11 @@ get_commit_hash() {
         return 1
     fi
 }
+
+# set_commit_hash() {
+#     repo_name="${1}"
+#     get_commit_hash ${SST_${repo_name}BRANCH}
+# }
 
 # ret="$(branch_to_commit_hash "master")"
 # echo "${ret}"
