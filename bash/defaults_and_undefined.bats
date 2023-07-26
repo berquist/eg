@@ -64,5 +64,10 @@ setup() {
 
 # The hash variable isn't set for macro or juno.
 # @test "set_commit_hash" {
-#     run set_commit_hash
+#     assert [ -n "${SST_MACROBRANCH}" ]
+#     assert [ ! -n "${SST_MACRO_HASH}" ]
+#     run set_commit_hash MACRO
+#     assert_success
+#     assert [ ! -n "${SST_MACROBRANCH}" ]
+#     assert [ -n "${SST_MACRO_HASH}" ]
 # }

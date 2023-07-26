@@ -53,9 +53,23 @@ get_commit_hash() {
     fi
 }
 
+# This naive attempt doesn't work
+#
 # set_commit_hash() {
-#     repo_name="${1}"
-#     get_commit_hash ${SST_${repo_name}BRANCH}
+#     local repo_name="${1}"
+
+#     local varname_branch="SST_${repo_name}BRANCH"
+#     local varname_branch_default="SST_${repo_name}BRANCH_default"
+#     local varname_hash="SST_${repo_name}_HASH"
+
+#     local commit_hash
+#     commit_hash=$(get_commit_hash "${!varname_branch}" "${!varname_branch_default}" "${!varname_hash}")
+
+#     # Now that the commit hash is determined, unconditionally set its
+#     # respective variable and remove any possibility of reading the branch
+#     # variable later on.
+#     eval "${!varname_hash}=${commit_hash}"
+#     eval "unset ${!varname_branch}"
 # }
 
 # ret="$(branch_to_commit_hash "master")"
