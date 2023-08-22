@@ -6,8 +6,8 @@
 template<typename T>
 class Mat2D {
 public:
-    Mat2D();
-    Mat2D(size_t nrow, size_t ncol);
+    Mat2D() { }
+    Mat2D(size_t nrow, size_t ncol) { };
 
 private:
     std::unique_ptr<T> m_buf;

@@ -7,25 +7,41 @@ set(SRC
     int_size_t_comparison
     mod
     return_const_reference
-    stl
     string_conversion
     # test_function
     test_getenv
-    test_lambda
     test_openmp_2
     test_openmp_copyprivate
     test_openmp
     # test_template_inheritance
     )
 
+set(SRC_11
+    alphanum
+    stl
+)
+
+set(SRC_14
+    test_lambda
+)
+
 message(STATUS "SRC: ${SRC}")
+message(STATUS "SRC_11: ${SRC_11}")
+message(STATUS "SRC_14: ${SRC_14}")
 
 foreach(file ${SRC})
     add_executable(${file}.x ${file}.cpp)
 endforeach(file)
 
-add_executable(alphanum.x alphanum.cpp)
-set_target_properties(alphanum.x PROPERTIES CXX_STANDARD 11)
+foreach(file ${SRC_11})
+    add_executable(${file}.x ${file}.cpp)
+    set_target_properties(${file}.x PROPERTIES CXX_STANDARD 11)
+endforeach(file)
+
+foreach(file ${SRC_14})
+    add_executable(${file}.x ${file}.cpp)
+    set_target_properties(${file}.x PROPERTIES CXX_STANDARD 14)
+endforeach(file)
 
 find_package(Armadillo)
 find_package(cereal)
