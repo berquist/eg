@@ -1,0 +1,3 @@
+* jupiter
+
+This is the code from chapter 3 of "Autotools, 2nd Edition: A Practitioner's Guide to GNU Autoconf, Automake, and Libtool".
