@@ -7,7 +7,11 @@ check: all
 	./jupiter | grep "Hello from .*jupiter!"
 	@echo "*** ALL TESTS PASSED ***"
 
+install:
+	install -d $(prefix)/bin
+	install -m 0755 jupiter $(prefix)/bin
+
 clean:
 	-rm jupiter
 
-.PHONY: all clean check
+.PHONY: all clean check install

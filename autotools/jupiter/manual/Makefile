@@ -3,7 +3,10 @@ version = 1.0
 tarname = $(package)
 distdir = $(tarname)-$(version)
 
-all clean check jupiter:
+prefix = /usr/local
+export prefix
+
+all clean check install jupiter:
 	cd src && $(MAKE) $@
 
 dist: $(distdir).tar.gz
@@ -29,4 +32,4 @@ FORCE:
 	-rm $(distdir).tar.gz >/dev/null 2>&1
 	rm -rf $(distdir)
 
-.PHONY: FORCE all clean check dist distcheck
+.PHONY: FORCE all clean check dist distcheck install
