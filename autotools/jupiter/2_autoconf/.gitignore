@@ -1,1 +1,4 @@
 install/
+configure
+autom4te.cache/
+config.status
