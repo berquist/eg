@@ -1,0 +1,45 @@
+-- 2-bit shift register
+-- https://youtu.be/fcVOEW9cKq8?si=QE8VDh6jb8jodSjH
+
+MODULE main
+
+VAR
+    bit1 : boolean;
+    bit2 : boolean;
+    state : {A,B,C,D};
+    input : boolean;
+
+ASSIGN
+    init(state) := A;
+    init(bit1) := FALSE;
+    init(bit2) := FALSE;
+    next(state) := case
+        state = A & input = TRUE : B;
+        state = A & input = FALSE : A;
+        state = B & input = TRUE : D;
+        state = B & input = FALSE : C;
+        state = C & input = TRUE : B;
+        state = C & input = FALSE : A;
+        state = D & input = TRUE : D;
+        state = D & input = FALSE : C;
+        esac;
+    next(bit1) := case
+        state = A & input = TRUE : TRUE;
+        state = A & input = FALSE : FALSE;
+        state = B & input = TRUE : TRUE;
+        state = B & input = FALSE : FALSE;
+        state = C & input = TRUE : TRUE;
+        state = C & input = FALSE : FALSE;
+        state = D & input = TRUE : TRUE;
+        state = D & input = FALSE : FALSE;
+        esac;
+    next(bit2) := case
+        state = A & input = TRUE : FALSE;
+        state = A & input = FALSE : FALSE;
+        state = B & input = TRUE : TRUE;
+        state = B & input = FALSE : TRUE;
+        state = C & input = TRUE : FALSE;
+        state = C & input = FALSE : FALSE;
+        state = D & input = TRUE : TRUE;
+        state = D & input = FALSE : TRUE;
+        esac;
