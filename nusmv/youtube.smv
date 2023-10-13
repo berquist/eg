@@ -6,26 +6,26 @@ MODULE main
 VAR
     bit1 : boolean;
     bit2 : boolean;
-    state : {A,B,C,D};
+    state : {a,B,C,D};
     input : boolean;
 
 ASSIGN
-    init(state) := A;
+    init(state) := a;
     init(bit1) := FALSE;
     init(bit2) := FALSE;
     next(state) := case
-        state = A & input = TRUE : B;
-        state = A & input = FALSE : A;
+        state = a & input = TRUE : B;
+        state = a & input = FALSE : a;
         state = B & input = TRUE : D;
         state = B & input = FALSE : C;
         state = C & input = TRUE : B;
-        state = C & input = FALSE : A;
+        state = C & input = FALSE : a;
         state = D & input = TRUE : D;
         state = D & input = FALSE : C;
         esac;
     next(bit1) := case
-        state = A & input = TRUE : TRUE;
-        state = A & input = FALSE : FALSE;
+        state = a & input = TRUE : TRUE;
+        state = a & input = FALSE : FALSE;
         state = B & input = TRUE : TRUE;
         state = B & input = FALSE : FALSE;
         state = C & input = TRUE : TRUE;
@@ -34,8 +34,8 @@ ASSIGN
         state = D & input = FALSE : FALSE;
         esac;
     next(bit2) := case
-        state = A & input = TRUE : FALSE;
-        state = A & input = FALSE : FALSE;
+        state = a & input = TRUE : FALSE;
+        state = a & input = FALSE : FALSE;
         state = B & input = TRUE : TRUE;
         state = B & input = FALSE : TRUE;
         state = C & input = TRUE : FALSE;
@@ -43,3 +43,6 @@ ASSIGN
         state = D & input = TRUE : TRUE;
         state = D & input = FALSE : TRUE;
         esac;
+
+LTLSPEC
+    G(bit1 -> X bit2)
