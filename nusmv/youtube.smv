@@ -45,4 +45,6 @@ ASSIGN
         esac;
 
 LTLSPEC
-    G(bit1 -> X bit2)
+    G(bit1 -> X bit2);
+LTLSPEC
+    G(bit1 -> X bit1);
