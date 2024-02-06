@@ -42,6 +42,6 @@ int main() {
     std::cout << is_arma_container(mycdcol) << std::endl;
     std::cout << is_arma_container(mystldvec) << std::endl;
     std::cout << is_arma_container(myd) << std::endl;
-    
+
     return 0;
 }

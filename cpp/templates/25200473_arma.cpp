@@ -1,5 +1,5 @@
-#include <type_traits>
 #include <armadillo>
+#include <type_traits>
 
 template<typename T>
 struct innermost_impl

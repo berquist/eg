@@ -1,8 +1,8 @@
-from libc.stdlib cimport malloc, free
+from libc.stdlib cimport free, malloc
 
 import numpy as np
-cimport numpy as np
 
+cimport numpy as np
 cimport using_cython
 
 
@@ -18,7 +18,7 @@ def cython_dgemm():
     cdef const double [:] vy = npy.reshape((-1))
     # Rather than do this an allocate Python-side, ...
     # npz = np.empty((n, l))
-    # cdef double [:] vz = npz.reshape((-1))    
+    # cdef double [:] vz = npz.reshape((-1))
     # using_cython.dgemm(n, l, m, &vx[0], &vy[0], &vz[0])
     # ...do it C-side.
     cdef double* z = <double *> malloc(sizeof(double) * (n * l))

@@ -1,8 +1,6 @@
 import ctypes
 
-
 if __name__ == "__main__":
-
     mylib = ctypes.CDLL("build/libmylib.so")
     print(mylib.add1(4))
 

@@ -7,7 +7,7 @@
 // stolen from https://stackoverflow.com/a/24207963
 
 template<class T>
-struct inner_class_of { using outer_class = T; }; 
+struct inner_class_of { using outer_class = T; };
 
 struct Message {
     struct Binding:inner_class_of<Message> {

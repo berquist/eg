@@ -4,7 +4,7 @@
 class Person {
 public:
     virtual ~Person() = default;
-    
+
 };
 
 class Employee : public Person {};
@@ -33,7 +33,7 @@ int main() {
 
     try {
         typeid(*p);          // Not undefined behavior; throws std::bad_typeid.
-            
+
     } catch (...) { }
 
     Person& p_ref = *p; // Undefined behavior: dereferencing null

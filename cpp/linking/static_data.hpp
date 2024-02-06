@@ -20,7 +20,7 @@ struct fdiff {
 };
 // const double mystruct::myval = 42.35;
 const entry<size_t, fdiff> fdiff::ideriv = {"ideriv", "ideriv"};
-    
+
 } // namespace static_data
 
 #endif // STATIC_DATA_HPP

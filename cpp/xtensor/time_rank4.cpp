@@ -21,7 +21,7 @@ int main() {
         // std::cout << xt::eval(rdot_simple) << std::endl;
         // std::cout << xt::sum(rt * rt) << std::endl;
         te = std::chrono::high_resolution_clock::now();
-        const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(te - ts).count();        
+        const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(te - ts).count();
         std::cout << run << " (ms): " << duration << std::endl;
         times[run] = duration;
     }

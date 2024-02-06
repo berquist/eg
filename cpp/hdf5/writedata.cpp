@@ -135,7 +135,7 @@ int main() {
         return -1;
     } catch(DataSpaceIException error) {
         error.printErrorStack();
-        return -1;        
+        return -1;
     }
     return 0;
 }

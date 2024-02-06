@@ -1,10 +1,7 @@
+import mylib_f77
 import numpy as np
 
-import mylib_f77
-
-
 if __name__ == "__main__":
-
     x = [2.0, 3.0, 4.0]
     y = [1.0, 1.0, 1.0]
     alpha = 1.0

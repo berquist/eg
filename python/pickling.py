@@ -6,28 +6,35 @@ import pickle
 
 class A:
     """Default getstate and setstate"""
+
     def __init__(self, i):
         self.i = i
 
 
 class Z:
     """Default getstate and setstate"""
+
     def __init__(self, i):
         self.i = i
 
 
 # copyreg.pickle(Z, lambda z: Z, z.i)
 def pickle_z(z):
-    return Z, (z.i, )
+    return Z, (z.i,)
+
+
 copyreg.pickle(Z, pickle_z)
 
 
 class B:
     """Default setstate"""
+
     def __init__(self, i):
         self.i = i
+
     def __eq__(self, other):
         return self.i == other.i
+
     def __getstate__(self):
         print(f"calling __getstate__ for {type(self)}")
         return {"i": self.i}
@@ -35,10 +42,13 @@ class B:
 
 class C:
     """Default getstate"""
+
     def __init__(self, i):
         self.i = i
+
     def __eq__(self, other):
         return self.i == other.i
+
     def __setstate__(self, state):
         print(f"calling __setstate__ for {type(self)}")
         self.i = state["i"]
@@ -47,11 +57,14 @@ class C:
 class D:
     def __init__(self, i):
         self.i = i
+
     def __eq__(self, other):
         return self.i == other.i
+
     def __getstate__(self):
         print(f"calling __getstate__ for {type(self)}")
         return self.i
+
     def __setstate__(self, state):
         print(f"calling __setstate__ for {type(self)}")
         self.i = state
@@ -59,20 +72,27 @@ class D:
 
 class E:
     """Both defaults with __slots__"""
+
     __slots__ = "i"
+
     def __init__(self, i):
         self.i = i
+
     def __eq__(self, other):
         return self.i == other.i
 
 
 class F:
     """Default setstate with __slots__"""
+
     __slots__ = "i"
+
     def __init__(self, i):
         self.i = i
+
     def __eq__(self, other):
         return self.i == other.i
+
     def __getstate__(self):
         print(f"calling __getstate__ for {type(self)}")
         return {slot: getattr(self, slot) for slot in self.__slots__}
@@ -80,11 +100,15 @@ class F:
 
 class G:
     """Default getstate with __slots__"""
+
     __slots__ = "i"
+
     def __init__(self, i):
         self.i = i
+
     def __eq__(self, other):
         return self.i == other.i
+
     def __setstate__(self, state):
         print(f"calling __setstate__ for {type(self)}")
         for slot in state:
@@ -92,7 +116,6 @@ class G:
 
 
 if __name__ == "__main__":
-
     print("=" * 70)
 
     print(pickle.dumps(A(1)))

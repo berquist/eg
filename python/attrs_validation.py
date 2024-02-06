@@ -1,7 +1,7 @@
-import pytest
-
-from attr import attrs, attrib
+from attr import attrib, attrs
 from attr.validators import instance_of
+
+import pytest
 
 
 @attrs(slots=True, frozen=True)

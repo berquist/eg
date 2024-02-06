@@ -13,6 +13,6 @@
 
 double rank4_simple(xt::xtensor<double, 4> &a, xt::xtensor<double, 4> &b) {
     double s = 0.0;
-    
+
     return s;
 }

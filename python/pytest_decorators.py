@@ -81,7 +81,9 @@ def skip_on_function_name(testfunc: Callable[[], None]) -> Callable[[], None]:
     return testdecorator
 
 
-def skip_on_function_name2(name: str) -> Callable[[Callable[[], None]], Callable[[], None]]:
+def skip_on_function_name2(
+    name: str,
+) -> Callable[[Callable[[], None]], Callable[[], None]]:
     """A decorator that skips a test when its name contains 'name'."""
 
     def testdecorator(testfunc: Callable[[], None]) -> Callable[[], None]:

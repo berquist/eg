@@ -2,7 +2,6 @@ from functools import partial
 
 from graphviz import Digraph
 
-
 g = Digraph("test_edgewidths")
 
 g.edge("1", "10", penwidth="1")
@@ -54,11 +53,14 @@ edges = [
 
 max_weight = max([edge[2] for edge in edges])
 
+
 def _interp(x1, x2, y1, y2, xx):
     yy = ((xx - x1) * (y2 - y1) / (x2 - x1)) + y1
     return yy
 
+
 interp = partial(_interp, 0.0, max_weight, _min, _max)
+
 
 def penwidth(weight):
     if weight <= 0.0:
@@ -74,7 +76,7 @@ for l_from, l_to, weight in edges:
         # penwidth = _interp(0.0, max_weight, _min, _max, weight)
         penwidth = interp(weight)
         g.edge(l_from, l_to, str(weight), penwidth=f"{penwidth:.3f}")
-        
+
 
 print(g.source)
 g.render(format="pdf")

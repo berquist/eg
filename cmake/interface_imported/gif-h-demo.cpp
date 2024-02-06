@@ -30,7 +30,7 @@ void SetPixelFloat( int xx, int yy, float fred, float fgrn, float fblu )
     uint8_t red = (uint8_t)roundf( 255.0f * fred );
     uint8_t grn = (uint8_t)roundf( 255.0f * fgrn );
     uint8_t blu = (uint8_t)roundf( 255.0f * fblu );
-    
+
     SetPixel( xx, yy, red, grn, blu );
 }
 
@@ -41,14 +41,14 @@ int main(int argc, const char * argv[])
     {
         filename = argv[1];
     }
-    
+
     // Create a gif
     GifWriter writer = {};
     GifBegin( &writer, filename, width, height, 2, 8, true );
-    
+
     for( int frame=0; frame<256; ++frame )
     {
-        
+
         // Make an image, somehow
         // this is the default shadertoy - credit to shadertoy.com
         float tt = frame * 3.14159f * 2 / 255.0f;
@@ -58,23 +58,23 @@ int main(int argc, const char * argv[])
             {
                 float fx = xx / (float)width;
                 float fy = yy / (float)height;
-                
+
                 float red = 0.5f + 0.5f * cosf(tt+fx);
                 float grn = 0.5f + 0.5f * cosf(tt+fy+2.f);
                 float blu = 0.5f + 0.5f * cosf(tt+fx+4.f);
-                
+
                 SetPixelFloat( xx, yy, red, grn, blu );
             }
         }
-        
-        
+
+
         // Write the frame to the gif
         printf( "Writing frame %d...\n", frame );
         GifWriteFrame( &writer, image, width, height, 2, 8, true );
     }
-    
+
     // Write EOF
     GifEnd( &writer );
-    
+
     return 0;
 }

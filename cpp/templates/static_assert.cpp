@@ -54,6 +54,6 @@ int main() {
     // B is `prop`, D is *not* `is_thing`
     // B b2 = d.add<B>();
     D d2 = b.add<D>();
-    
+
     return 0;
 }

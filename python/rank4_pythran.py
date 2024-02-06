@@ -16,7 +16,7 @@ def rank4_simple(a, b):
 #     return rank4_simple(a, b)
 
 
-#pythran export rank4_simple2_pythran(float64 [:,:,:,:], float64 [:,:,:,:])
+# pythran export rank4_simple2_pythran(float64 [:,:,:,:], float64 [:,:,:,:])
 def rank4_simple2_pythran(a, b):
     assert a.shape == b.shape
     da, db, dc, dd = a.shape

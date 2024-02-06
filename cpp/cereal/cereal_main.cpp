@@ -35,7 +35,7 @@ int main() {
         oarchive_port_binary(m1_ref, m2_ref, m3_ref); // Write the data to the archive
         oarchive_xml(m1_ref, m2_ref, m3_ref); // Write the data to the archive
         oarchive_json(m1_ref, m2_ref, m3_ref); // Write the data to the archive
-          
+
     } // archive goes out of scope, ensuring all contents are flushed
 
     // {
@@ -43,7 +43,7 @@ int main() {
 
     //     MyClass m1, m2, m3;
     //     iarchive(m1, m2, m3); // Read the data from the archive
-          
+
     // }
     return 0;
 }

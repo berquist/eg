@@ -193,7 +193,7 @@ void traverse(const entry<TD> &e) {
 
 // template<typename TD>
 // void traverse(const entry2<TD, schema_base> &e) {
-    
+
 // }
 
 template<typename T>

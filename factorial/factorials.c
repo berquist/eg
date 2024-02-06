@@ -25,14 +25,14 @@ long long factorial_long_long(long long n) {
     if (n == 0) {
         return 1;
     }
-    return n * factorial_long_long(n - 1);    
+    return n * factorial_long_long(n - 1);
 }
 
 unsigned long long factorial_unsigned_long_long(unsigned long long n) {
     if (n == 0) {
         return 1;
     }
-    return n * factorial_unsigned_long_long(n - 1);    
+    return n * factorial_unsigned_long_long(n - 1);
 }
 
 int main() {
