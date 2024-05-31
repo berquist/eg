@@ -1,0 +1,7 @@
+default: build-no build-yes
+
+build-yes:
+    bash ./build_args_file.sh myargs.conf
+
+build-no:
+    bash ./build_args_file.sh
