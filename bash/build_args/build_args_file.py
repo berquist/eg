@@ -1,7 +1,6 @@
+import subprocess as sp
 from argparse import ArgumentParser
 from pathlib import Path
-import subprocess as sp
-
 
 parser = ArgumentParser()
 parser.add_argument("fn", type=Path)
