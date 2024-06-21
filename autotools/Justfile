@@ -1,5 +1,8 @@
-sugar_include_loc := "/Library/Developer/CommandLineTools/usr/share/bison"
+sugar_include_loc := "/usr/share/autoconf"
 
 all:
     m4 -I{{sugar_include_loc}} box.m4
     m4 -I{{sugar_include_loc}} split.m4
+
+remove-lib-prefix:
+    m4 -I{{sugar_include_loc}} remove_lib_prefix.m4
