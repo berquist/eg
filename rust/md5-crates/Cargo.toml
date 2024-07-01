@@ -1,0 +1,9 @@
+[package]
+name = "md5-crates"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.86"
+md-5 = "0.10.6"
+yet-another-md5 = "2.0.0"
