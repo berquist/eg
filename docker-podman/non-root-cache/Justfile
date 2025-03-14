@@ -1,0 +1,20 @@
+image_name := "non-root-cache-demo"
+
+default: build-docker build-podman
+
+build-docker:
+    docker build \
+        --progress=plain \
+        --no-cache \
+        -t {{ image_name }} {{ justfile_directory() }}
+
+build-podman:
+    podman build \
+        --no-cache \
+        -t {{ image_name }} {{ justfile_directory() }}
+
+untag-docker:
+    docker image rm {{ image_name }}
+
+untag-podman:
+    podman image rm {{ image_name }}
