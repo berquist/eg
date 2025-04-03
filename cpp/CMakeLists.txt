@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(eg C CXX)
+cmake_minimum_required(VERSION 3.10)
+project(eg LANGUAGES C CXX)
 
 set(SRC
     # complex_example

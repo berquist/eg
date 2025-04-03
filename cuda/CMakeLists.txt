@@ -1,7 +1,7 @@
 # Adapted from
 # https://developer.nvidia.com/blog/building-cuda-applications-cmake/
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 project(cuda_examples LANGUAGES CUDA)
 
 add_executable(test_rand.x test_rand.cu)

@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.8)
-project(test_external_project CXX)
+cmake_minimum_required(VERSION 3.10)
+project(test_external_project LANGUAGES CXX)
 
 # strongly adapted from
 # https://github.com/charlesnicholson/cmake-external-project-test/blob/e7bd116f027e8353ac78355450877619bdfbe0a4/CMakeLists.txt

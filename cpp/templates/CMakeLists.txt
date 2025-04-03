@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(template_examples C CXX)
+cmake_minimum_required(VERSION 3.10)
+project(template_examples LANGUAGES C CXX)
 
 find_package(Armadillo REQUIRED)
 

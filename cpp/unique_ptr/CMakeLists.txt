@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.1)
-project(TEST_UNIQUEPTR CXX)
+cmake_minimum_required(VERSION 3.10)
+project(TEST_UNIQUEPTR LANGUAGES CXX)
 
 set(TGT smart_ptr_main.x)
 add_executable(${TGT}

@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.8)
-project(list_membership NONE)
+cmake_minimum_required(VERSION 3.10)
+project(list_membership LANGUAGES NONE)
 
 function(_file_name_contains lst stub contains)
     set(${contains} 0 PARENT_SCOPE)

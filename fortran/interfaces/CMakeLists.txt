@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(INTERFACES C CXX Fortran)
+cmake_minimum_required(VERSION 3.10)
+project(INTERFACES LANGUAGES C CXX Fortran)
 
 set(SRC
     src/impl.cpp

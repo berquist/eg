@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(h5cpp_examples C CXX)
+cmake_minimum_required(VERSION 3.10)
+project(h5cpp_examples LANGUAGES C CXX)
 
 find_package(h5cpp REQUIRED)
 find_package(Armadillo REQUIRED)

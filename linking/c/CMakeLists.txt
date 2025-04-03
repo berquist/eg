@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 # https://stackoverflow.com/questions/17511496/how-to-create-a-shared-library-with-cmake
 project(linking_against_c VERSION 0.1)
 

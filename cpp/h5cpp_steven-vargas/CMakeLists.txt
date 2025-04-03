@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(H5CPP_examples CXX)
+cmake_minimum_required(VERSION 3.10)
+project(H5CPP_examples LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 

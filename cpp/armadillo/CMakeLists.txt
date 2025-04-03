@@ -1,5 +1,5 @@
-project(EG_ARMADILLO)
-cmake_minimum_required(VERSION 3.0)
+project(EG_ARMADILLO LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.10)
 
 find_package(Armadillo REQUIRED)
 

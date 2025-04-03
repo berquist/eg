@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.8)
-project(CEREAL_EXAMPLES CXX)
+cmake_minimum_required(VERSION 3.10)
+project(CEREAL_EXAMPLES LANGUAGES CXX)
 
 find_package(cereal REQUIRED)
 

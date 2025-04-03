@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 # https://stackoverflow.com/questions/17511496/how-to-create-a-shared-library-with-cmake
-project(mylib VERSION 0.1)
+project(mylib LANGUAGES C VERSION 0.1)
 
 add_library(mylib SHARED mylib.c)
 set_target_properties(mylib

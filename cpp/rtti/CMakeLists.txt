@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(rtti_examples CXX)
+cmake_minimum_required(VERSION 3.10)
+project(rtti_examples LANGUAGES CXX)
 
 set(SRC
     rtti_example

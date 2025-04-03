@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(hdf5_examples C)
+cmake_minimum_required(VERSION 3.10)
+project(hdf5_examples LANGUAGES C)
 
 find_package(HDF5 REQUIRED)
 

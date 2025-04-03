@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(c_examples C)
+cmake_minimum_required(VERSION 3.10)
+project(c_examples LANGUAGES C)
 
 find_package(GSL)
 find_package(HDF5)

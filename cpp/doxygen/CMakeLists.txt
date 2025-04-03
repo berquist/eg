@@ -1,5 +1,5 @@
-project(EG_DOXYGEN CXX)
-cmake_minimum_required(VERSION 3.0)
+project(EG_DOXYGEN LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.10)
 
 find_package(Doxygen 1.9 REQUIRED)
 

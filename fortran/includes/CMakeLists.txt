@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(INCLUDES Fortran)
+cmake_minimum_required(VERSION 3.10)
+project(INCLUDES LANGUAGES Fortran)
 
 set(SRC
     src/main.F

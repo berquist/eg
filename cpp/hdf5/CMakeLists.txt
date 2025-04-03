@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(hdf5_examples CXX)
+cmake_minimum_required(VERSION 3.10)
+project(hdf5_examples LANGUAGES CXX)
 
 find_package(HDF5 REQUIRED COMPONENTS CXX)
 add_executable(writedata.x writedata.cpp)
