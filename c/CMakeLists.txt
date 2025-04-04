@@ -17,3 +17,5 @@ set_target_properties(complex_example_99.x
     C_STANDARD 99
     C_STANDARD_REQUIRED TRUE)
 target_link_libraries(complex_example_99.x m)
+
+add_executable(numeric_casts.x numeric_casts.c)
