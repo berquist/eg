@@ -9,3 +9,7 @@ edition = "2018"
 [dependencies]
 num = "*"
 num-complex = "*"
+
+[build-dependencies]
+bindgen = "0.71.1"
+cmake = "0.1.54"
