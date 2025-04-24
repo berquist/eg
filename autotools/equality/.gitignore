@@ -1,0 +1,22 @@
+# autoreconf --install
+Makefile.in
+aclocal.m4
+autom4te.cache/
+compile
+config.h.in
+configure
+depcomp
+install-sh
+missing
+src/Makefile.in
+
+# ./configure
+Makefile
+config.h
+config.status
+src/.deps/
+src/Makefile
+stamp-h1
+
+# make
+src/hello
