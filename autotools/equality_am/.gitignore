@@ -1,0 +1,13 @@
+# autoreconf --install
+aclocal.m4
+autom4te.cache/
+configure
+install-sh
+missing
+Makefile.in
+
+# ./configure
+Makefile
+config.status
+
+# make
