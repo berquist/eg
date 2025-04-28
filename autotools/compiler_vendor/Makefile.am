@@ -1,4 +1,4 @@
-MY_FLAGS = $(COMPILER_FLAGS)
+MY_FLAGS = $(COMPILER_FLAGS_2)
 
 .PHONY: default
 default:
