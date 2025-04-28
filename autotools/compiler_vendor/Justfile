@@ -1,0 +1,5 @@
+default:
+    git clean -xdf .
+    autoreconf --install
+    ./configure
+    make default
