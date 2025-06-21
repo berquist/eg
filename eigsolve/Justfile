@@ -1,0 +1,14 @@
+run: build
+    python {{ justfile_directory() }}/test.py
+    {{ justfile_directory() }}/install/bin/arma.x
+    {{ justfile_directory() }}/install/bin/eigen.x
+
+build:
+    cmake \
+        -S {{ justfile_directory() }} \
+        -B {{ justfile_directory() }}/build \
+        -DCMAKE_INSTALL_PREFIX={{ justfile_directory() }}/install \
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+    cmake --build {{ justfile_directory() }}/build
+    ln -fsv {{ justfile_directory() }}/build/compile_commands.json {{ justfile_directory() }}
+    cmake --install {{ justfile_directory() }}/build
