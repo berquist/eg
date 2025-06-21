@@ -1,5 +1,6 @@
 run: build
     python {{ justfile_directory() }}/test.py
+    julialauncher {{ justfile_directory() }}/test.jl
     {{ justfile_directory() }}/install/bin/arma.x
     {{ justfile_directory() }}/install/bin/eigen.x
 
