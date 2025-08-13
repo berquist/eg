@@ -23,4 +23,14 @@ mod tests {
         // assert_eq!(ref_abs, diff.abs());
         // assert_eq!(ref_rel, diff.abs() / c.abs());
     }
+
+    #[test]
+    fn rounding() {
+        println!("+2.3 = {:.1}", (2.3_f64).round_ties_even());
+        println!("+2.5 = {:.1}", (2.5_f64).round_ties_even());
+        println!("+3.5 = {:.1}", (3.5_f64).round_ties_even());
+        println!("-2.3 = {:.1}", (-2.3_f64).round_ties_even());
+        println!("-2.5 = {:.1}", (-2.5_f64).round_ties_even());
+        println!("-3.5 = {:.1}", (-3.5_f64).round_ties_even());
+    }
 }
