@@ -14,7 +14,7 @@ ndarray-linalg = { version = "*", features = ["netlib"] }
 ndarray-rand = "*"
 
 [dev-dependencies]
-criterion = "*"
+criterion = "=0.5.1"
 
 [[bench]]
 name = "bench_eg"
