@@ -10,4 +10,4 @@ edition = "2018"
 cxx = "0.5"
 
 [build-dependencies]
-cxx-build = "0.5"
+cxx-build = "1.0"
